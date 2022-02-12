@@ -11,9 +11,9 @@ namespace BEEBRAAA
         static void Main(string[] args)
         {
             int allPictures = 52;
-            int rowPictures = 3;
+            int countPerRow = 3;
             int rowCount = allPictures / rowPictures;
-            int excessCount = allPictures % rowCount;
+            int excessCountPictures = allPictures % rowCount;
             Console.WriteLine("Заполненных рядов " + rowCount);
             Console.WriteLine("Лишних картинок " + excessCount);
         }
