@@ -12,7 +12,7 @@ namespace _5
         {
             int countQueue;
             int timeReceipt = 13;
-            int hour = 60;
+            int minutesInHour = 60;
             Console.WriteLine("Сколько человек вы видите:");
             countQueue = Convert.ToInt32(Console.ReadLine());
             int totalMinutes = countQueue * timeReceipt;
