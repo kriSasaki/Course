@@ -12,6 +12,7 @@ namespace _19
         {
             ShowMenu();
         }
+        
         static void ShowMenu()
         {
             bool isOn = true;
@@ -50,6 +51,7 @@ namespace _19
                 }
             }
         }
+        
         static void AddDossier(ref string[] array1, ref string[] array2)
         {
             string[] tempArray1 = new string[array1.Length + 1];
@@ -74,6 +76,7 @@ namespace _19
             array2 = tempArray2;
 
         }
+        
         static void ShowDossier(ref string[] fullNames,ref string[] positions)
         {
             for (int i = 0; i < fullNames.Length; i++)
@@ -81,6 +84,7 @@ namespace _19
                 Console.WriteLine((i+1)+". "+fullNames[i]+" - "+positions[i]);
             }
         }
+        
         static void DeleteDossier(ref string[] array1, ref string[] array2, ref bool isDossierFound)
         {
             Console.WriteLine("Введите номер досье: ");
@@ -109,6 +113,7 @@ namespace _19
 
             CheckDossier(isDossierFound);
         }
+        
         static void SearchDossier(ref string[] fullNames,ref  string[] positions,ref bool isDossierFound)
         {
             Console.WriteLine("Найти имя: ");
@@ -125,6 +130,7 @@ namespace _19
 
             CheckDossier(isDossierFound);
         }
+        
         static void CheckDossier(bool isDossierFound)
         {
             if (isDossierFound==false)
