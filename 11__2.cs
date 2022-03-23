@@ -18,27 +18,13 @@ namespace _11._2
             int sum = 0;
             bool IsAllMultiplefound = false;
 
-            for (int i = 1; i <= number / multipleThree; i += 1)
+            for (int i = 1; i <= number / multipleThree || i<=number/multipleFive; i += 1)
             {
                 sum += multipleThree;
-                if (i == number / multipleThree)
-                {
-                    Console.WriteLine(sum);
-                    IsAllMultiplefound = true;
-                }
+                sum += multipleFive;
+
             }
-            if (!IsAllMultiplefound)
-            {
-                sum = 0;
-                for (int i = 1; i <= number / multipleFive; i += 1)
-                {
-                    sum += multipleFive;
-                    if (i == number / multipleFive)
-                    {
-                        Console.WriteLine(sum);
-                    }
-                }
-            }
+            Console.WriteLine(sum);
         }
     }
 }
