@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,14 +13,20 @@ namespace _11._2
             Random random = new Random();
             int maxNumber = 100;
             int number = random.Next(maxNumber);
-            int multiple = 3;
-            int sum = 0;
+            int multipleThree = 3;
+            int multipleFive = 5;
+            int sumOfmultipleThree = 0;
+            int sumOfmultipleFive = 0;
 
-            for (int i = 1; i <= number/multiple; i += 1)
+            for (int i = 1; i <= number/ multipleThree; i += 1)
             {
-                sum += multiple;
+                sumOfmultipleThree += multipleThree;
             }
-            Console.WriteLine(sum);
+            for (int i = 1; i <= number / multipleFive; i += 1)
+            {
+                sumOfmultipleFive += multipleFive;
+            }
+            Console.WriteLine(sumOfmultipleThree + "  " + sumOfmultipleFive);
         }
     }
 }
