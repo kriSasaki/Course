@@ -15,18 +15,30 @@ namespace _11._2
             int number = random.Next(maxNumber);
             int multipleThree = 3;
             int multipleFive = 5;
-            int sumOfmultipleThree = 0;
-            int sumOfmultipleFive = 0;
+            int sum = 0;
+            bool IsAllMultiplefound = false;
 
-            for (int i = 1; i <= number/ multipleThree; i += 1)
+            for (int i = 1; i <= number / multipleThree; i += 1)
             {
-                sumOfmultipleThree += multipleThree;
+                sum += multipleThree;
+                if (i == number / multipleThree)
+                {
+                    Console.WriteLine(sum);
+                    IsAllMultiplefound = true;
+                }
             }
-            for (int i = 1; i <= number / multipleFive; i += 1)
+            if (!IsAllMultiplefound)
             {
-                sumOfmultipleFive += multipleFive;
+                sum = 0;
+                for (int i = 1; i <= number / multipleFive; i += 1)
+                {
+                    sum += multipleFive;
+                    if (i == number / multipleFive)
+                    {
+                        Console.WriteLine(sum);
+                    }
+                }
             }
-            Console.WriteLine(sumOfmultipleThree + "  " + sumOfmultipleFive);
         }
     }
 }
