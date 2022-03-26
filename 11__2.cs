@@ -16,10 +16,10 @@ namespace _11._2
             int multipleThree = 3;
             int multipleFive = 5;
             int sum = 0;
-
-            for (int i = 1; i <= number; i++)
+             
+            for (int i = 0; i <= number; i++)
             {
-                if (i <= number / multipleThree || i <= number / multipleFive)
+                if (i % multipleThree==0 || i % multipleFive==0)
                 {
                     sum += i;
                 }
