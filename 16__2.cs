@@ -18,7 +18,7 @@ namespace _16._2
             int minLimit = 100;
             int amount = 0;
 
-            for(int i=1; i <= maxLimit; i += number)
+            for(int i=0; i <= maxLimit; i += number)
             {
                 if (i >= minLimit)
                 {
