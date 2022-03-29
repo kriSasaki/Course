@@ -13,18 +13,18 @@ namespace _11._2
             Random random = new Random();
             int maxNumber = 100;
             int number = random.Next(maxNumber);
-            int multipleThree = 3;
-            int multipleFive = 5;
+            int fisrtMultiplee = 3;
+            int secondMultiple = 5;
             int sum = 0;
              
             for (int i = 0; i <= number; i++)
             {
-                if (i % multipleThree==0 || i % multipleFive==0)
+                if (i % fisrtMultiplee == 0 || i % secondMultiple == 0)
                 {
                     sum += i;
                 }
             }
-            Console.WriteLine(sum);
+            Console.WriteLine(number +"   "+sum);
         }
     }
 }
