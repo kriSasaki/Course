@@ -14,6 +14,7 @@ namespace _18__2
             int leftBracket=0;
             int rightBracket = 0;
             int depth = 1;
+            
             for(int i=0;i<symbols.Length;i++)
             {
                 if (symbols[i] == '(')
