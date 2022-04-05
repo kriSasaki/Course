@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,26 +11,28 @@ namespace _18__2
         static void Main(string[] args)
         {
             string symbols = Console.ReadLine();
-            int leftBracket=0;
-            int rightBracket = 0;
+            int brackets = 0;
             int depth = 1;
-            
-            for(int i=0;i<symbols.Length;i++)
+            for (int i = 0; i < symbols.Length; i++)
             {
                 if (symbols[i] == '(')
                 {
-                    leftBracket++;
+                    brackets++;
                 }
                 if (symbols[i] == ')')
                 {
-                    if(i!=symbols.Length-1 && symbols[i+1] != '(')
+                    if (i != symbols.Length - 1 && symbols[i + 1] != '(')
                     {
                         depth++;
                     }
-                    rightBracket++;
+                    brackets--;
+                }
+                if (brackets < 0)
+                {
+                    break;
                 }
             }
-            if (leftBracket == rightBracket)
+            if (brackets == 0)
             {
                 Console.WriteLine("Строка корректная");
             }
