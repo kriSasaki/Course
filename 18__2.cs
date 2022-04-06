@@ -13,6 +13,7 @@ namespace _18__2
             string symbols = Console.ReadLine();
             int brackets = 0;
             int depth = 1;
+            
             for (int i = 0; i < symbols.Length; i++)
             {
                 if (symbols[i] == '(')
