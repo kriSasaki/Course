@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,7 +33,14 @@ namespace _24__2
                     break;
                 }
             }
-            Console.WriteLine("\n"+ number + "  " + amount);
+            if (amount == 1)
+            {
+                Console.WriteLine("---");
+            }
+            else
+            {
+                Console.WriteLine("\n" + number + "  " + amount);
+            }
         }
     }
 }
