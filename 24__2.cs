@@ -21,16 +21,16 @@ namespace _24__2
                 numbers[i] = random.Next(maxNumber);
                 Console.Write(numbers[i] + " ");
             }
-            for(int i = 0; i < numbers.Length-1; i++)
+            for (int i = 0; i < numbers.Length-1; i++)
             {
-                if (numbers[i] == numbers[i + 1])
+                if (numbers[i] == numbers[i+1])
                 {
                     number = numbers[i];
                     amount++;
-                }
-                else
-                {
-                    break;
+                    if(numbers[i+1] != numbers[i + 2])
+                    {
+                        break;
+                    } 
                 }
             }
             if (amount == 1)
