@@ -11,36 +11,43 @@ namespace _24__2
         static void Main(string[] args)
         {
             Random random = new Random();
-            int[] numbers = new int[10];
-            int maxNumber=10;
-            int number=0;
-            int amount = 1;
+            int[] numbers = new int[30];
+            int maxNumberInArray=10;
+            int number=numbers[0];
+            int amountOfNumbers = 1;
+            int maxSequence = -1;
+            int repeatingNumber = 0;
 
-            for (int i =0;i<numbers.Length;i++)
+            for (int i=0;i<numbers.Length;i++)
             {
-                numbers[i] = random.Next(maxNumber);
+                numbers[i] = random.Next(maxNumberInArray);
                 Console.Write(numbers[i] + " ");
             }
-            for (int i = 0; i < numbers.Length-1; i++)
+            
+            for (int i = 1; i < numbers.Length; i++)
             {
-                if (numbers[i] == numbers[i+1])
+                if (number == numbers[i])
                 {
-                    number = numbers[i];
-                    amount++;
-                    if(numbers[i+1] != numbers[i + 2])
+                    amountOfNumbers++;
+                }
+                
+                else 
+                {
+                    if (amountOfNumbers > maxSequence)
                     {
-                        break;
-                    } 
+                        maxSequence = amountOfNumbers;
+                        repeatingNumber = number;
+                    }
+                    amountOfNumbers = 1;
+                    number = numbers[i];
                 }
             }
-            if (amount == 1)
+      
+            if (amountOfNumbers>maxSequence)
             {
-                Console.WriteLine("---");
+                maxSequence = amountOfNumbers;
             }
-            else
-            {
-                Console.WriteLine("\n" + number + "  " + amount);
-            }
+            Console.WriteLine("\n" + repeatingNumber + "  " + maxSequence);
         }
     }
 }
