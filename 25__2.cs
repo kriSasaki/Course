@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,9 +35,9 @@ namespace _25__2
                 }
             }
 
-            foreach(int i in array)
+            foreach(int numberInArray in array)
             {
-                Console.Write(i);
+                Console.Write(numberInArray);
             }
         }
     }
