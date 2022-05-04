@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,12 +21,12 @@ namespace _5._1
 
             for (int i = 0; i < amount; i++)
             {
-                int lastNumber = array[array.Length - 1];
-                for (int j = array.Length - 1; j > 0; j--)
+                int firstNumber = array[0];
+                for (int j = array[0]; j < array.Length; j++)
                 {
-                    array[j] = array[j - 1];
+                    array[j-1] = array[j];
                 }
-                array[0] = lastNumber;
+                array[array.Length-1] = firstNumber;
             }
 
             foreach (int i in array)
