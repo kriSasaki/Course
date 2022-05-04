@@ -29,7 +29,7 @@ namespace _5._1
                 array[array.Length-1] = firstNumber;
             }
 
-            foreach (int i in array)
+            foreach (int element in array)
             {
                 Console.Write(i + " ");
             }
