@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,21 +14,26 @@ namespace _5._1
 
             while (isNumberconverted == false)
             {
-                Console.WriteLine("Введите строку: ");
-                string numberInString = Console.ReadLine();
-                
-                if (Int32.TryParse(numberInString, out int number))
-                {
-                    Console.WriteLine("Число: " + number);
-                    Console.ReadKey();
-                    isNumberconverted = true;
-                }
-                else
-                {
-                    Console.WriteLine("Нельзя сконфертировать");
-                    Console.ReadKey();
-                }
+                tryParse(ref isNumberconverted);
+                Console.ReadKey();
                 Console.Clear();
+            }
+        }
+
+        static void tryParse(ref bool check)
+        {
+            Console.WriteLine("Введите строку: ");
+            string numberInString = Console.ReadLine();
+
+            if (Int32.TryParse(numberInString, out int number))
+            {
+                Console.WriteLine("Число: " + number);
+                Console.ReadKey();
+                check = true;
+            }
+            else
+            {
+                Console.WriteLine("Нельзя сконфертировать");
             }
         }
     }
