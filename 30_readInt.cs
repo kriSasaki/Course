@@ -10,18 +10,20 @@ namespace _5._1
     {
         static void Main(string[] args)
         {
-            GetString();
+            GetNumber();
         }
 
-        static void GetString()
+        static int GetNumber()
         {
             bool isNumberConverted = false;
+            int number = 0;
+
             while (isNumberConverted == false)
             {
                 Console.WriteLine("Введите строку: ");
                 string numberInString = Console.ReadLine();
                 
-                if (isNumberConverted = Int32.TryParse(numberInString, out int number))
+                if (isNumberConverted = Int32.TryParse(numberInString, out number))
                 {                   
                     Console.WriteLine("Число: " + number);
                     Console.ReadKey();
@@ -34,6 +36,7 @@ namespace _5._1
                 Console.ReadKey();
                 Console.Clear();
             }
+            return number;
         }
     }
 }
