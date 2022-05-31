@@ -10,31 +10,31 @@ namespace _5._1
     {
         static void Main(string[] args)
         {
-            bool isNumberconverted = false;
+            string numberInString = null;
+            bool isNumberConverted = false;
 
-            while (isNumberconverted == false)
+            while (isNumberConverted == false)
             {
-                tryParse(ref isNumberconverted);
+                GetString(ref numberInString);
+                if (Int32.TryParse(numberInString, out int number))
+                {
+                    Console.WriteLine("Число: " + number);
+                    Console.ReadKey();
+                    isNumberConverted = true;
+                }
+                else
+                {
+                    Console.WriteLine("Нельзя сконфертировать");
+                }
                 Console.ReadKey();
                 Console.Clear();
             }
         }
 
-        static void tryParse(ref bool check)
+        static void GetString(ref string numberInString)
         {
             Console.WriteLine("Введите строку: ");
-            string numberInString = Console.ReadLine();
-
-            if (Int32.TryParse(numberInString, out int number))
-            {
-                Console.WriteLine("Число: " + number);
-                Console.ReadKey();
-                check = true;
-            }
-            else
-            {
-                Console.WriteLine("Нельзя сконфертировать");
-            }
+            numberInString = Console.ReadLine();
         }
     }
 }
