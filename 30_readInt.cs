@@ -12,11 +12,12 @@ namespace _5._1
         {
             string numberInString = null;
             bool isNumberConverted = false;
+            int number = 0;
 
             while (isNumberConverted == false)
             {
-                GetString(ref numberInString);
-                if (Int32.TryParse(numberInString, out int number))
+                GetString(ref numberInString, ref isNumberConverted, ref number);
+                if (isNumberConverted)
                 {
                     Console.WriteLine("Число: " + number);
                     Console.ReadKey();
@@ -31,10 +32,11 @@ namespace _5._1
             }
         }
 
-        static void GetString(ref string numberInString)
+        static void GetString(ref string numberInString, ref bool checkTheString, ref int number)
         {
             Console.WriteLine("Введите строку: ");
             numberInString = Console.ReadLine();
+            checkTheString = Int32.TryParse(numberInString, out number);
         }
     }
 }
