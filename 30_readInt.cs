@@ -10,19 +10,23 @@ namespace _5._1
     {
         static void Main(string[] args)
         {
-            string numberInString = null;
-            bool isNumberConverted = false;
-            int number = 0;
+            GetString();
+        }
 
+        static void GetString()
+        {
+            bool isNumberConverted = false;
             while (isNumberConverted == false)
             {
-                GetString(ref numberInString, ref isNumberConverted, ref number);
-                if (isNumberConverted)
-                {
+                Console.WriteLine("Введите строку: ");
+                string numberInString = Console.ReadLine();
+                
+                if (isNumberConverted = Int32.TryParse(numberInString, out int number))
+                {                   
                     Console.WriteLine("Число: " + number);
                     Console.ReadKey();
-                    isNumberConverted = true;
                 }
+
                 else
                 {
                     Console.WriteLine("Нельзя сконфертировать");
@@ -30,13 +34,6 @@ namespace _5._1
                 Console.ReadKey();
                 Console.Clear();
             }
-        }
-
-        static void GetString(ref string numberInString, ref bool checkTheString, ref int number)
-        {
-            Console.WriteLine("Введите строку: ");
-            numberInString = Console.ReadLine();
-            checkTheString = Int32.TryParse(numberInString, out number);
         }
     }
 }
