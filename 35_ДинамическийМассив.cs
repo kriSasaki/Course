@@ -22,7 +22,6 @@ namespace _35_ДинамическийМассив
                 {
                     Console.Write(numberInNumbers + "|");
                 }
-                Console.WriteLine("\nСумма всех чисел: " + sum);
                 
                 Console.Write("\nВведите число, либо sum - сумма, либо exit - выход" +
                     "\n");
@@ -53,6 +52,8 @@ namespace _35_ДинамическийМассив
         static void SumOfNumbers(List<int>  numbers, out int sum)
         {
             sum = numbers.Sum();
+            Console.WriteLine("\nСумма всех чисел: " + sum);
+            Console.ReadKey();
         }
     }
 }
