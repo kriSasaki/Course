@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,58 +12,47 @@ namespace _35_ДинамическийМассив
         {
             List<int> numbers = new List<int>();
             bool isWork = true;
+            int sum = 0;
 
             while (isWork)
             {
-                foreach (int i in numbers)
+                int number;
+                
+                foreach (int numberInNumbers in numbers)
                 {
-                    Console.Write(i + "|");
+                    Console.Write(numberInNumbers + "|");
                 }
-
-                Console.Write("\nadd - добавить число, sum - сумма, exit - выход" +
-                    "\nВведите команду: ");
+                Console.WriteLine("\nСумма всех чисел: " + sum);
+                
+                Console.Write("\nВведите число, либо sum - сумма, либо exit - выход" +
+                    "\n");
                 string command = Console.ReadLine();
 
-                switch (command)
-                {
-                    case "add":
-                        AddNumber(numbers);
-                        break;
-                    case "sum":
-                        SumOfNumbers(numbers);
-                        break;
-                    case "exit":
-                        isWork = false;
-                        break;
-                }
-                Console.Clear();
-            }
-        }
-
-        static void AddNumber(List<int> numbers)
-        {
-            bool isNumberAdded = false;
-            int number;
-
-            while (isNumberAdded == false)
-            {
-                Console.Write("Введите число: ");
-                string checkNumber = Console.ReadLine();
-
-                if (Int32.TryParse(checkNumber, out number))
+                if (Int32.TryParse(command, out number))
                 {
                     numbers.Add(number);
-                    isNumberAdded = true;
+                }
+                else if (command == "sum")
+                {
+                    SumOfNumbers(numbers, out sum);
+                }
+                else if(command == "exit")
+                {
+                    isWork = false;
+                }
+                else
+                {
+                    Console.WriteLine("Ошибка!!!");
+                    Console.ReadKey();
                 }
                 Console.Clear();
             }
         }
 
-        static void SumOfNumbers(List<int>  numbers)
+
+        static void SumOfNumbers(List<int>  numbers, out int sum)
         {
-            int sum = numbers.Sum();
-            Console.WriteLine("Сумма всех чисел: " + sum);
-            Console.ReadKey();
+            sum = numbers.Sum();
         }
     }
 }
