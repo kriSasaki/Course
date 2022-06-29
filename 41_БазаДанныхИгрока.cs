@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,15 +11,16 @@ namespace _41_БазаДанныхИгрока
         static void Main(string[] args)
         {
             Database database = new Database();
-            database.Menu();
+            database.ShowMenu();
         }
     }
 
     class Database
     {
         private List<Player> _players = new List<Player>();
-        
-        public void Menu()
+        private int _id;
+
+        public void ShowMenu()
         {
             bool isWork = true;
 
@@ -88,13 +89,12 @@ namespace _41_БазаДанныхИгрока
             if (_players.Count > 0)
             {
                 ShowPlayers();
-                
-                Console.Write("Введите порядковый номер для удаления игрока: ");
-                string stringInNumber = Console.ReadLine();
 
-                if (Int32.TryParse(stringInNumber, out int sequenceNumber))
+                Console.Write("Введите id игрока для его удаления: ");
+
+                if (TryGetPlayer(out _id))
                 {
-                    _players.RemoveAt(sequenceNumber - 1);
+                    _players.RemoveAt(_id - 1);
                     GetMessage("Данный игрок успешно удален.");
                 }
                 else
@@ -113,24 +113,19 @@ namespace _41_БазаДанныхИгрока
             if (_players.Count > 0)
             {
                 ShowPlayers();
-                
-                Console.Write("Введите порядковый номер для бана игрока: ");
-                string stringInNumber = Console.ReadLine();
-                
-                if (Int32.TryParse(stringInNumber, out int sequenceNumber))
+
+                Console.Write("Введите id игрока для его бана: ");
+
+                if (TryGetPlayer(out _id))
                 {
-                    if (_players[sequenceNumber - 1].IsBanned == false)
+                    if (_players[_id - 1].IsBanned == false)
                     {
-                        _players[sequenceNumber - 1].AddToBan();
-                        GetMessage("Игрок успешно забанен.");
-                    }
-                    else if (_players[sequenceNumber - 1].IsBanned == true)
-                    {
-                        GetMessage("Игрок уже забанен.");
+                        _players[_id - 1].Ban();
+                        GetMessage("Игрок успешно разбанен.");
                     }
                     else
                     {
-                        GetMessage("Номер неверный.");
+                        GetMessage("Игрок уже не в бане.");
                     }
                 }
                 else
@@ -149,24 +144,19 @@ namespace _41_БазаДанныхИгрока
             if (_players.Count > 0)
             {
                 ShowPlayers();
-                
-                Console.Write("Введите порядковый номер для разбана игрока: ");
-                string stringInNumber = Console.ReadLine();
-                
-                if (Int32.TryParse(stringInNumber, out int sequenceNumber))
+
+                Console.Write("Введите id для разбана игрока: ");
+
+                if (TryGetPlayer(out _id))
                 {
-                    if (_players[sequenceNumber - 1].IsBanned == true)
+                    if (_players[_id - 1].IsBanned == true)
                     {
-                        _players[sequenceNumber - 1].RemoveFromBan();
+                        _players[_id - 1].Unban();
                         GetMessage("Игрок успешно разбанен.");
-                    }
-                    else if (_players[sequenceNumber - 1].IsBanned == false)
-                    {
-                        GetMessage("Игрок уже не в бане.");
                     }
                     else
                     {
-                        GetMessage("Номер неверный.");
+                        GetMessage("Игрок уже не в бане.");
                     }
                 }
                 else
@@ -180,13 +170,18 @@ namespace _41_БазаДанныхИгрока
             }
         }
 
-
+        private bool TryGetPlayer(out int result)
+        {
+            string userInput = Console.ReadLine();
+            bool isStringNumber = int.TryParse(userInput, out result);
+            return isStringNumber;
+        }
 
         private void ShowPlayers()
         {
             for (int i = 0; i < _players.Count; i++)
             {
-                Console.Write(i + 1 + ". ");
+                Console.Write("Id игрока - " + i + 1 + ". ");
                 _players[i].PlayerDetails();
             }
             GetMessage("====================================================" +
@@ -198,7 +193,6 @@ namespace _41_БазаДанныхИгрока
     {
         private string _name;
         private int _level;
-        private string _flag;
         public bool IsBanned { get; private set; }
 
         public Player(string name, int level)
@@ -210,23 +204,25 @@ namespace _41_БазаДанныхИгрока
 
         public void PlayerDetails()
         {
+            string flag;
+
             if (IsBanned == false)
             {
-                _flag = "не забанен";
+                flag = "не забанен";
             }
             else
             {
-                _flag = "забанен";
+                flag = "забанен";
             }
-            Console.WriteLine($"Ник персонажа - {_name}, уровень - {_level}, статус бана - {_flag}");
+            Console.WriteLine($"Ник персонажа - {_name}, уровень - {_level}, статус бана - {flag}");
         }
 
-        public void AddToBan()
+        public void Ban()
         {
             IsBanned = true;
         }
 
-        public void RemoveFromBan()
+        public void Unban()
         {
             IsBanned = false;
         }
