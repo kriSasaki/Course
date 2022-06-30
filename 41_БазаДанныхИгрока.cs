@@ -18,7 +18,6 @@ namespace _41_БазаДанныхИгрока
     class Database
     {
         private List<Player> _players = new List<Player>();
-        private int _id;
 
         public void ShowMenu()
         {
@@ -92,7 +91,7 @@ namespace _41_БазаДанныхИгрока
 
                 Console.Write("Введите id игрока для его удаления: ");
 
-                if (TryGetPlayer(out _id))
+                if (TryGetId(out int _id))
                 {
                     _players.RemoveAt(_id - 1);
                     GetMessage("Данный игрок успешно удален.");
@@ -116,7 +115,7 @@ namespace _41_БазаДанныхИгрока
 
                 Console.Write("Введите id игрока для его бана: ");
 
-                if (TryGetPlayer(out _id))
+                if (TryGetId(out int _id))
                 {
                     if (_players[_id - 1].IsBanned == false)
                     {
@@ -147,11 +146,11 @@ namespace _41_БазаДанныхИгрока
 
                 Console.Write("Введите id для разбана игрока: ");
 
-                if (TryGetPlayer(out _id))
+                if (TryGetId(out int id))
                 {
-                    if (_players[_id - 1].IsBanned == true)
+                    if (_players[id - 1].IsBanned == true)
                     {
-                        _players[_id - 1].Unban();
+                        _players[id - 1].Unban();
                         GetMessage("Игрок успешно разбанен.");
                     }
                     else
@@ -170,7 +169,7 @@ namespace _41_БазаДанныхИгрока
             }
         }
 
-        private bool TryGetPlayer(out int result)
+        private bool TryGetId(out int result)
         {
             string userInput = Console.ReadLine();
             bool isStringNumber = int.TryParse(userInput, out result);
