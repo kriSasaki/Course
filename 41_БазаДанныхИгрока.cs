@@ -11,15 +11,16 @@ namespace _41_БазаДанныхИгрока
         static void Main(string[] args)
         {
             Database database = new Database();
-            database.ShowMenu();
+            database.Work();
         }
     }
 
     class Database
     {
         private List<Player> _players = new List<Player>();
+        
 
-        public void ShowMenu()
+        public void Work()
         {
             bool isWork = true;
 
@@ -58,29 +59,74 @@ namespace _41_БазаДанныхИгрока
                 }
             }
         }
+
+        private void ShowPlayers()
+        {
+            for (int i = 0; i < _players.Count; i++)
+            {
+                Console.Write("Порядковый индекс игрока - " + i +  ". ");
+                _players[i].PlayerDetails();
+            }
+            ShowMessage("====================================================" +
+                "\nКонец списка.");
+        }
         private void AddPlayer()
         {
+            Random random = new Random();
+            int maxId = 100;
             Console.Write("Введите никнейм игрока: ");
             string name = Console.ReadLine();
             Console.Write("Введите уровень игрока: ");
             string levelCheck = Console.ReadLine();
+            int id = random.Next(maxId);
+
+            if ((_players.Count > 0))
+            {
+                for (int i = 0; i <= _players.Count; i++)
+                {
+                    if(i==_players.Count)
+                    {
+                        break;
+                    }                
+                    if (_players[i]._id == id)
+                    {
+                        id = random.Next(maxId);
+                        i = 0;
+                    }
+                }
+            }
 
             if (Int32.TryParse(levelCheck, out int level))
             {
-                _players.Add(new Player(name, level));
-                GetMessage("Игрок успешно добавлен.");
+                _players.Add(new Player(name, level, id));
+                ShowMessage("Игрок успешно добавлен.");
             }
             else
             {
-                GetMessage("Введите корректные данные");
+                ShowMessage("Введите корректные данные");
             }
         }
 
-        private void GetMessage(string message)
+        private bool TryGetId(List<Player> players, out int playerIndex)
         {
-            Console.WriteLine(message);
-            Console.ReadKey();
-            Console.Clear();
+            playerIndex = 0;
+            string userInput = Console.ReadLine();
+            bool isStringNumber;
+            bool isPlayerFind = false;
+            
+            if (isStringNumber = int.TryParse(userInput, out int result))
+            {
+                for (int i = 0; i < players.Count; i++)
+                {
+                    if (result == players[i]._id)
+                    {
+                        playerIndex = i;
+                        isPlayerFind = true;
+                    }
+                }
+            }
+
+            return isPlayerFind;
         }
 
         private void RemovePlayer()
@@ -89,21 +135,21 @@ namespace _41_БазаДанныхИгрока
             {
                 ShowPlayers();
 
-                Console.Write("Введите id игрока для его удаления: ");
+                Console.Write("Введите ID игрока для его удаления: ");
 
-                if (TryGetId(out int _id))
+                if (TryGetId(_players, out int playerIndex))
                 {
-                    _players.RemoveAt(_id - 1);
-                    GetMessage("Данный игрок успешно удален.");
+                    _players.RemoveAt(playerIndex);
+                    ShowMessage("Данный игрок успешно удален.");
                 }
                 else
                 {
-                    GetMessage("Введите корректные данные");
+                    ShowMessage("Введите корректные данные");
                 }
             }
             else
             {
-                GetMessage("База данных пуста");
+                ShowMessage("База данных пуста");
             }
         }
 
@@ -115,26 +161,26 @@ namespace _41_БазаДанныхИгрока
 
                 Console.Write("Введите id игрока для его бана: ");
 
-                if (TryGetId(out int _id))
+                if (TryGetId(_players, out int playerIndex))
                 {
-                    if (_players[_id - 1].IsBanned == false)
+                    if (_players[playerIndex].IsBanned == false)
                     {
-                        _players[_id - 1].Ban();
-                        GetMessage("Игрок успешно разбанен.");
+                        _players[playerIndex].Ban();
+                        ShowMessage("Игрок успешно забанен.");
                     }
                     else
                     {
-                        GetMessage("Игрок уже не в бане.");
+                        ShowMessage("Игрок уже в бане.");
                     }
                 }
                 else
                 {
-                    GetMessage("Ошибка ввода.");
+                    ShowMessage("Ошибка ввода.");
                 }
             }
             else
             {
-                GetMessage("База данных пуста");
+                ShowMessage("База данных пуста");
             }
         }
 
@@ -146,60 +192,54 @@ namespace _41_БазаДанныхИгрока
 
                 Console.Write("Введите id для разбана игрока: ");
 
-                if (TryGetId(out int id))
+                if (TryGetId(_players, out int playerIndex))
                 {
-                    if (_players[id - 1].IsBanned == true)
+                    if (_players[playerIndex].IsBanned == true)
                     {
-                        _players[id - 1].Unban();
-                        GetMessage("Игрок успешно разбанен.");
+                        _players[playerIndex].Unban();
+                        ShowMessage("Игрок успешно разбанен.");
                     }
                     else
                     {
-                        GetMessage("Игрок уже не в бане.");
+                        ShowMessage("Игрок уже не в бане.");
                     }
                 }
                 else
                 {
-                    GetMessage("Ошибка ввода.");
+                    ShowMessage("Ошибка ввода.");
                 }
             }
             else
             {
-                GetMessage("База данных пуста");
+                ShowMessage("База данных пуста");
             }
         }
-
-        private bool TryGetId(out int result)
+      
+        private void ShowMessage(string message)
         {
-            string userInput = Console.ReadLine();
-            bool isStringNumber = int.TryParse(userInput, out result);
-            return isStringNumber;
-        }
-
-        private void ShowPlayers()
-        {
-            for (int i = 0; i < _players.Count; i++)
-            {
-                Console.Write("Id игрока - " + i + 1 + ". ");
-                _players[i].PlayerDetails();
-            }
-            GetMessage("====================================================" +
-                "\nКонец списка.");
+            Console.WriteLine(message);
+            Console.ReadKey();
+            Console.Clear();
         }
     }
 
     class Player
     {
+        Random random = new Random();
         private string _name;
         private int _level;
+        public int _id { get; private set; }
         public bool IsBanned { get; private set; }
 
-        public Player(string name, int level)
+        public Player(string name, int level, int id)
         {
             _name = name;
             _level = level;
+            _id = id;
             IsBanned = false;
         }
+
+
 
         public void PlayerDetails()
         {
@@ -213,7 +253,7 @@ namespace _41_БазаДанныхИгрока
             {
                 flag = "забанен";
             }
-            Console.WriteLine($"Ник персонажа - {_name}, уровень - {_level}, статус бана - {flag}");
+            Console.WriteLine($"ID персонажа - {_id}, ник персонажа - {_name}, уровень - {_level}, статус бана - {flag}");
         }
 
         public void Ban()
