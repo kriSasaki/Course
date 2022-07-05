@@ -18,8 +18,7 @@ namespace _41_БазаДанныхИгрока
     class Database
     {
         private List<Player> _players = new List<Player>();
-        
-
+       
         public void Work()
         {
             bool isWork = true;
