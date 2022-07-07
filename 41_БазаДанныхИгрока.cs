@@ -204,7 +204,7 @@ namespace _41_БазаДанныхИгрока
 
     class Player
     {       
-        private static int Ids;             
+        private static int _ids;  
         private string _name;
         private int _level;
         public int Id { get; private set; }
@@ -214,7 +214,7 @@ namespace _41_БазаДанныхИгрока
         {
             _name = name;
             _level = level;
-            Id = ++Ids;
+            Id = ++_ids;
             IsBanned = false;
         }
 
