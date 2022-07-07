@@ -204,7 +204,7 @@ namespace _41_БазаДанныхИгрока
 
     class Player
     {       
-        public static int Ids;             
+        private static int Ids;             
         private string _name;
         private int _level;
         public int Id { get; private set; }
