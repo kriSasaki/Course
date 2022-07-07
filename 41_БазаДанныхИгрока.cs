@@ -64,7 +64,7 @@ namespace _41_БазаДанныхИгрока
             for (int i = 0; i < _players.Count; i++)
             {
                 Console.Write("Порядковый индекс игрока - " + i + ". ");
-                _players[i].ShowPlayerDetails();
+                _players[i].ShowDetails();
             }
             ShowMessage("====================================================" +
                 "\nКонец списка.");
@@ -204,11 +204,11 @@ namespace _41_БазаДанныхИгрока
 
     class Player
     {       
-        public static int Ids;     
-        public int Id { get; private set; }
-        public bool IsBanned { get; private set; }
+        public static int Ids;             
         private string _name;
         private int _level;
+        public int Id { get; private set; }
+        public bool IsBanned { get; private set; }
 
         public Player(string name, int level)
         {
@@ -218,7 +218,7 @@ namespace _41_БазаДанныхИгрока
             IsBanned = false;
         }
 
-        public void ShowPlayerDetails()
+        public void ShowDetails()
         {
             string banCheck;
 
