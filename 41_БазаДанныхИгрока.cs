@@ -97,7 +97,7 @@ namespace _41_БазаДанныхИгрока
             {
                 for (int i = 0; i < _players.Count; i++)
                 {
-                    if (result == _players[i].playerId)
+                    if (result == _players[i].Id)
                     {
                         playerIndex = i;
                         isPlayerFind = true;
@@ -203,22 +203,20 @@ namespace _41_БазаДанныхИгрока
     }
 
     class Player
-    {
+    {       
+        public static int Ids;     
+        public int Id { get; private set; }
+        public bool IsBanned { get; private set; }
         private string _name;
         private int _level;
-        public static int ids;
-        public int playerId { get; private set; }
-        public bool IsBanned { get; private set; }
 
         public Player(string name, int level)
         {
             _name = name;
             _level = level;
-            playerId = ++ids;
+            Id = ++Ids;
             IsBanned = false;
         }
-
-
 
         public void ShowPlayerDetails()
         {
@@ -232,7 +230,7 @@ namespace _41_БазаДанныхИгрока
             {
                 banCheck = "забанен";
             }
-            Console.WriteLine($"ID персонажа - {playerId}, ник персонажа - {_name}, уровень - {_level}, статус бана - {banCheck}");
+            Console.WriteLine($"ID персонажа - {Id}, ник персонажа - {_name}, уровень - {_level}, статус бана - {banCheck}");
         }
 
         public void Ban()
