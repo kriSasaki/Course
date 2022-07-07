@@ -18,7 +18,7 @@ namespace _41_БазаДанныхИгрока
     class Database
     {
         private List<Player> _players = new List<Player>();
-       
+
         public void Work()
         {
             bool isWork = true;
@@ -63,41 +63,22 @@ namespace _41_БазаДанныхИгрока
         {
             for (int i = 0; i < _players.Count; i++)
             {
-                Console.Write("Порядковый индекс игрока - " + i +  ". ");
-                _players[i].PlayerDetails();
+                Console.Write("Порядковый индекс игрока - " + i + ". ");
+                _players[i].ShowPlayerDetails();
             }
             ShowMessage("====================================================" +
                 "\nКонец списка.");
         }
         private void AddPlayer()
         {
-            Random random = new Random();
-            int maxId = 100;
             Console.Write("Введите никнейм игрока: ");
             string name = Console.ReadLine();
             Console.Write("Введите уровень игрока: ");
             string levelCheck = Console.ReadLine();
-            int id = random.Next(maxId);
-
-            if ((_players.Count > 0))
-            {
-                for (int i = 0; i <= _players.Count; i++)
-                {
-                    if(i==_players.Count)
-                    {
-                        break;
-                    }                
-                    if (_players[i]._id == id)
-                    {
-                        id = random.Next(maxId);
-                        i = 0;
-                    }
-                }
-            }
 
             if (Int32.TryParse(levelCheck, out int level))
             {
-                _players.Add(new Player(name, level, id));
+                _players.Add(new Player(name, level));
                 ShowMessage("Игрок успешно добавлен.");
             }
             else
@@ -106,18 +87,17 @@ namespace _41_БазаДанныхИгрока
             }
         }
 
-        private bool TryGetId(List<Player> players, out int playerIndex)
+        private bool TryGetId(out int playerIndex)
         {
             playerIndex = 0;
             string userInput = Console.ReadLine();
-            bool isStringNumber;
             bool isPlayerFind = false;
-            
-            if (isStringNumber = int.TryParse(userInput, out int result))
+
+            if (int.TryParse(userInput, out int result))
             {
-                for (int i = 0; i < players.Count; i++)
+                for (int i = 0; i < _players.Count; i++)
                 {
-                    if (result == players[i]._id)
+                    if (result == _players[i].playerId)
                     {
                         playerIndex = i;
                         isPlayerFind = true;
@@ -136,7 +116,7 @@ namespace _41_БазаДанныхИгрока
 
                 Console.Write("Введите ID игрока для его удаления: ");
 
-                if (TryGetId(_players, out int playerIndex))
+                if (TryGetId(out int playerIndex))
                 {
                     _players.RemoveAt(playerIndex);
                     ShowMessage("Данный игрок успешно удален.");
@@ -160,7 +140,7 @@ namespace _41_БазаДанныхИгрока
 
                 Console.Write("Введите id игрока для его бана: ");
 
-                if (TryGetId(_players, out int playerIndex))
+                if (TryGetId(out int playerIndex))
                 {
                     if (_players[playerIndex].IsBanned == false)
                     {
@@ -191,7 +171,7 @@ namespace _41_БазаДанныхИгрока
 
                 Console.Write("Введите id для разбана игрока: ");
 
-                if (TryGetId(_players, out int playerIndex))
+                if (TryGetId(out int playerIndex))
                 {
                     if (_players[playerIndex].IsBanned == true)
                     {
@@ -213,7 +193,7 @@ namespace _41_БазаДанныхИгрока
                 ShowMessage("База данных пуста");
             }
         }
-      
+
         private void ShowMessage(string message)
         {
             Console.WriteLine(message);
@@ -224,35 +204,35 @@ namespace _41_БазаДанныхИгрока
 
     class Player
     {
-        Random random = new Random();
         private string _name;
         private int _level;
-        public int _id { get; private set; }
+        public static int ids;
+        public int playerId { get; private set; }
         public bool IsBanned { get; private set; }
 
-        public Player(string name, int level, int id)
+        public Player(string name, int level)
         {
             _name = name;
             _level = level;
-            _id = id;
+            playerId = ++ids;
             IsBanned = false;
         }
 
 
 
-        public void PlayerDetails()
+        public void ShowPlayerDetails()
         {
-            string flag;
+            string banCheck;
 
             if (IsBanned == false)
             {
-                flag = "не забанен";
+                banCheck = "не забанен";
             }
             else
             {
-                flag = "забанен";
+                banCheck = "забанен";
             }
-            Console.WriteLine($"ID персонажа - {_id}, ник персонажа - {_name}, уровень - {_level}, статус бана - {flag}");
+            Console.WriteLine($"ID персонажа - {playerId}, ник персонажа - {_name}, уровень - {_level}, статус бана - {banCheck}");
         }
 
         public void Ban()
