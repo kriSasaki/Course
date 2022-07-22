@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -66,6 +66,14 @@ namespace _42_Библиотека
         {
             private List<Book> _books = new List<Book>();
 
+            public Library()
+            {
+                _books.Add(new Book("а", "о", 1937, "Ужасы"));
+                _books.Add(new Book("хммм", "Он", 1887, "Детектив"));
+                _books.Add(new Book("123", "Джо", 1949, "Классика"));
+                _books.Add(new Book("а", "о", 1937, "Ужасы"));
+            }
+
             public void ShowAll()
             {
                 Console.WriteLine("Полный список книг: ");
@@ -93,11 +101,12 @@ namespace _42_Библиотека
             public void Remove()
             {
                 Console.Write("Введите номер книги для удаления: ");
-                int index = ReadInt() - 1;
+                int bookNumber = ReadInt() - 1;
+                int indexOfFirstBook = 0;
 
-                if (index <= _books.Count)
+                if (bookNumber < _books.Count && bookNumber > indexOfFirstBook)
                 {
-                    _books.RemoveAt(index);
+                    _books.RemoveAt(bookNumber);
                     Console.WriteLine("Книга удалена.");
                 }
                 else
@@ -114,6 +123,7 @@ namespace _42_Библиотека
                 {
                     Console.Write("Неверный ввод числа!\nНеобходимо ввести целое число: ");
                 }
+                
                 return result;
             }
 
@@ -149,18 +159,19 @@ namespace _42_Библиотека
             {
                 Console.Write("Введите название книги: ");
                 string title = Console.ReadLine();
-                int index = 0;
+                int bookNumber = 0;
 
                 foreach (var book in _books)
                 {
-                    index++;
+                    bookNumber++;
 
                     if (book.Title.ToLower() == title.ToLower())
                     {
-                        Console.WriteLine($"{index}. {book.Title}: \"{book.Author}\", {book.YearOfRelease}, {book.Genre}");
+                        Console.WriteLine($"{bookNumber}. {book.Title}: \"{book.Author}\", {book.YearOfRelease}, {book.Genre}");
                     }
                 }
-                CheckFinded(index);
+                
+                ShowUnfinded(bookNumber);
                 ShowMessage("Конец списка.");
             }
             
@@ -168,18 +179,19 @@ namespace _42_Библиотека
             {
                 Console.Write("Введите автора книги: ");
                 string author = Console.ReadLine();
-                int index = 0;
+                int bookNumber = 0;
 
                 foreach (var book in _books)
                 {
-                    index++;
+                    bookNumber++;
 
                     if (book.Author.ToLower() == author.ToLower())
                     {
-                        Console.WriteLine($"{index}. {book.Title}: \"{book.Author}\", {book.YearOfRelease}, {book.Genre}");
+                        Console.WriteLine($"{bookNumber}. {book.Title}: \"{book.Author}\", {book.YearOfRelease}, {book.Genre}");
                     }
                 }
-                CheckFinded(index);
+                
+                ShowUnfinded(bookNumber);
                 ShowMessage("Конец списка.");
             }
 
@@ -187,18 +199,19 @@ namespace _42_Библиотека
             {
                 Console.Write("Введите год выпуска: ");
                 int year = Convert.ToInt32(Console.ReadLine());
-                int index = 0;
+                int bookNumber = 0;
 
                 foreach (var book in _books)
                 {
-                    index++;
+                    bookNumber++;
 
                     if (book.YearOfRelease == year)
                     {
-                        Console.WriteLine($"{index}. {book.Title}: \"{book.Author}\", {book.YearOfRelease}, {book.Genre}");
+                        Console.WriteLine($"{bookNumber}. {book.Title}: \"{book.Author}\", {book.YearOfRelease}, {book.Genre}");
                     }
                 }
-                CheckFinded(index);
+                
+                ShowUnfinded(bookNumber);
                 ShowMessage("Конец списка.");
             }
 
@@ -206,18 +219,19 @@ namespace _42_Библиотека
             {
                 Console.Write("Введите жанр книги: ");
                 string genre = Console.ReadLine();
-                int index = 0;
+                int bookNumber = 0;
 
                 foreach (var book in _books)
                 {
-                    index++;
+                    bookNumber++;
 
                     if (book.Genre.ToLower() == genre.ToLower())
                     {
-                        Console.WriteLine($"{index}. {book.Title}: \"{book.Author}\", {book.YearOfRelease}, {book.Genre}");
+                        Console.WriteLine($"{bookNumber}. {book.Title}: \"{book.Author}\", {book.YearOfRelease}, {book.Genre}");
                     }
                 }
-                CheckFinded(index);
+                
+                ShowUnfinded(bookNumber);
                 ShowMessage("Конец списка.");
             }
 
@@ -228,7 +242,7 @@ namespace _42_Библиотека
                 Console.Clear();
             }
 
-            private void CheckFinded(int number)
+            private void ShowUnfinded(int number)
             {
                 if (number == 0)
                 {
