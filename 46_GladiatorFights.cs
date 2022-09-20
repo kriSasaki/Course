@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,17 +24,16 @@ namespace _46_GladiatorFights
                 Gladiator firstGladiator;
                 Gladiator secondGladiator;
 
-                switch (key.Key)
+                if(key.Key == ConsoleKey.Escape)
                 {
-                    case ConsoleKey.Escape:
-                        isActive = false;
-                        break;
-                    default:
-                        arena.ShowAll();
-                        arena.Choose(out firstGladiator);
-                        arena.Choose(out secondGladiator);;
-                        arena.Fight(firstGladiator, secondGladiator);
-                        break;
+                    isActive = false;
+                }
+                else
+                {
+                    arena.ShowAll();
+                    arena.Choose(out firstGladiator);
+                    arena.Choose(out secondGladiator); ;
+                    arena.Fight(firstGladiator, secondGladiator);
                 }
 
                 Console.ReadKey(true);
@@ -45,7 +44,6 @@ namespace _46_GladiatorFights
     class Arena
     {
         private List<Gladiator> _warriors = new List<Gladiator>();
-        Random random = new Random();
 
         public Arena()
         {
@@ -73,6 +71,7 @@ namespace _46_GladiatorFights
 
         public void Choose(out Gladiator gladiator)
         {
+            Random random = new Random();
             int gladiatorIndex = random.Next(_warriors.Count);
             gladiator = _warriors[gladiatorIndex];
             _warriors.RemoveAt(gladiatorIndex);
@@ -89,8 +88,24 @@ namespace _46_GladiatorFights
 
             while (firstFighter.Health > 0 && secondFighter.Health > 0)
             {
-                Fight(firstFighter, secondFighter, baseDamageFirst, baseArmorFirst);
-                Fight(secondFighter, firstFighter, baseDamageSecond, baseArmorSecond);
+                if (firstFighter.SkippingTurn > 0)
+                {
+                    firstFighter.SkipTurn(-1);
+                    Console.WriteLine($"{firstFighter.Name} пропускает ход!");
+                }
+                else
+                {
+                    firstFighter.Attack(secondFighter);
+                }
+                if (secondFighter.SkippingTurn > 0)
+                {
+                    secondFighter.SkipTurn(-1);
+                    Console.WriteLine($"{firstFighter.Name} пропускает ход!");
+                }
+                else
+                {
+                    secondFighter.Attack(firstFighter);
+                }
                 firstFighter.ShowStats();
                 secondFighter.ShowStats();
                 Console.WriteLine("\n");
@@ -109,60 +124,12 @@ namespace _46_GladiatorFights
                 }
             }
         }
-
-        public void Fight(Gladiator fighter, Gladiator enemyFighter, float baseDamage, float baseArmor)
-        {
-            if (fighter.SkippingTurn > 0)
-            {
-                fighter.SkipTurn(-1);
-                Console.WriteLine($"{fighter.Name} пропускает ход!");
-            }
-            else
-            {
-                if (fighter.AbilityRecharging == 0)
-                {
-                    fighter.UsePower();
-
-                    if (fighter.SkippingTurn > 0)
-                    {
-                        enemyFighter.SkipTurn(fighter.SkippingTurn);
-                        fighter.SkipTurn(-(fighter.SkippingTurn));
-                    }                
-                }
-                else
-                {
-                    fighter.ReduceRecharging();
-                }
-
-                if (fighter.MagicDamage > 0)
-                {
-                    enemyFighter.TakeMagicDamage(fighter.MagicDamage);
-                }
-                
-                if (enemyFighter.SuccessfullDodge == true)
-                {
-                    enemyFighter.TakeDamage(0);
-                    Console.WriteLine($"{enemyFighter.Name} успешно увернулся от атаки");
-                }
-                else
-                {
-                    enemyFighter.TakeDamage(fighter.Damage);
-                }
-            }
-
-            if (fighter.AbilityDuration > 0)
-            {
-                fighter.ReduceDuration();
-            }
-            else
-            {
-                fighter.NormalizeStats(fighter, baseDamage, baseArmor);
-            }
-        }
     }
 
     class Gladiator
     {
+        private float _baseDamage;
+        private float _baseArmor;
         public string Name { get; protected set; }
         public float Health { get; protected set; }
         public float Damage { get; protected set; }
@@ -181,6 +148,8 @@ namespace _46_GladiatorFights
             Damage = damage;
             Armor = armor;
             MagicResistance = magicResistance;
+            _baseArmor = Armor;
+            _baseDamage = Damage;
         }
 
         public void ShowStats()
@@ -189,15 +158,50 @@ namespace _46_GladiatorFights
                 $"\n---------------------------------------------");
         }
 
+        public void Attack(Gladiator enemyFighter)
+        {
+            if (AbilityRecharging == 0)
+            {
+                UsePower();
+
+                if (SkippingTurn > 0)
+                {
+                    enemyFighter.SkipTurn(SkippingTurn);
+                    SkipTurn(-SkippingTurn);
+                }
+            }
+            else
+            {
+                ReduceRecharging();
+            }
+
+            if (MagicDamage > 0)
+            {
+                enemyFighter.TakeMagicDamage(MagicDamage);
+                MagicDamage = 0;
+            }
+
+            enemyFighter.TakeDamage(Damage);
+
+            if (AbilityDuration > 0)
+            {
+                ReduceDuration();
+            }
+            else
+            {
+                NormalizeStats();
+            }
+        }
+
         public void SkipTurn(int steps)
         {
             SkippingTurn += steps;
         }
 
-        public void NormalizeStats(Gladiator fighter, float baseDamage, float baseArmor)
+        public void NormalizeStats()
         {
-            fighter.Armor = baseArmor;
-            fighter.Damage = baseDamage;
+            Armor = _baseArmor;
+            Damage = _baseDamage;
         }
         
         public void ReduceDuration()
@@ -212,19 +216,22 @@ namespace _46_GladiatorFights
 
         public void TakeDamage(float enemyDamage)
         {
-            if (enemyDamage >= Armor)
-            {
-                Health -= enemyDamage;
-            }
-            else 
-            {
-                Health -= enemyDamage / (Armor / enemyDamage);
-            }
-
             if (SuccessfullDodge == true)
             {
                 SuccessfullDodge = false;
-            }        
+                Console.WriteLine($"{Name} успешно увернулся от атаки");
+            }
+            else
+            {
+                if (enemyDamage >= Armor)
+                {
+                    Health -= enemyDamage;
+                }
+                else
+                {
+                    Health -= enemyDamage / (Armor / enemyDamage);
+                }
+            }
         }
 
         public void TakeMagicDamage(float enemyMagicDamage)
