@@ -10,8 +10,8 @@ namespace _46_GladiatorFights
     {
         static void Main(string[] args)
         {
-            bool isActive = true;
             ConsoleKeyInfo key;
+            bool isActive = true;            
 
             while (isActive)
             {
@@ -77,7 +77,7 @@ namespace _46_GladiatorFights
             int gladiatorIndex;
             Console.Write("Введите номер гладиатора: ");
 
-            while((gladiatorIndex = ReadInt() - 1) > _gladiators.Count)
+            while((gladiatorIndex = ReadInt() - 1) > _gladiators.Count && (gladiatorIndex = ReadInt() - 1) < 1)
             {
                 Console.WriteLine("Такого гладиатора нет");
             }
@@ -104,11 +104,6 @@ namespace _46_GladiatorFights
 
         public void Fight(Gladiator firstFighter, Gladiator secondFighter)
         {
-            float baseDamageFirst = firstFighter.Damage;
-            float baseArmorFirst = firstFighter.Armor;
-            float baseDamageSecond = secondFighter.Damage;
-            float baseArmorSecond = secondFighter.Armor;
-
             firstFighter.ShowStats();
             secondFighter.ShowStats();
 
@@ -146,7 +141,7 @@ namespace _46_GladiatorFights
                 {
                     Console.WriteLine($"{secondFighter.Name} победил!");
                 }
-                else if (secondFighter.Health <= 0)
+                else
                 {
                     Console.WriteLine($"{firstFighter.Name} победил!");
                 }
@@ -155,7 +150,7 @@ namespace _46_GladiatorFights
     }
 
     class Gladiator
-    {
+    {  
         private float _baseDamage;
         private float _baseArmor;
         public string Name { get; protected set; }
@@ -168,7 +163,7 @@ namespace _46_GladiatorFights
         public int AbilityDuration { get; protected set; }
         public int SkippingTurn { get; protected set; }
         public bool CanDodge { get; protected set; }
-
+        
         public Gladiator(string name, int health, int damage, int armor, int magicResistance)
         {
             Name = name;
@@ -294,10 +289,10 @@ namespace _46_GladiatorFights
         public override void UsePower()
         {
             Console.WriteLine($"\t{Name} использует способность \"Ярость берсерка\"");
-            BerserkerRage();
+            CastBerserkerRage();
         }
 
-        public void BerserkerRage()
+        public void CastBerserkerRage()
         {
             Damage *= 2;
             Armor *= 2;
@@ -339,10 +334,10 @@ namespace _46_GladiatorFights
         public override void UsePower()
         {
             Console.WriteLine($"\t{Name} использует способность \"Кора Хиста\"");
-            Histskin();
+            CastHistskin();
         }
 
-        public void Histskin()
+        public void CastHistskin()
         {
             Health += 150;
             AbilityRecharging = 2;
@@ -356,10 +351,10 @@ namespace _46_GladiatorFights
         public override void UsePower()
         {
             Console.WriteLine($"\t{Name} использует способность \"Стормовой плащ\"");
-            StormCloak();
+            CastStormCloak();
         }
 
-        public void StormCloak()
+        public void CastStormCloak()
         {
             Damage += 50;
             Health += 70;
@@ -376,15 +371,13 @@ namespace _46_GladiatorFights
         public override void UsePower()
         {
             Console.WriteLine($"\t{Name} использует способность \"Огненный шар\"");
-            Fireball();
+            CastFireball();
         }
 
-        public void Fireball()
+        public void CastFireball()
         {
             MagicDamage = 150;
             AbilityRecharging = 5;
         }
     }
 }
-
-    
