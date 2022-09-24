@@ -32,7 +32,10 @@ namespace _46_GladiatorFights
                 {
                     arena.ShowAll();
                     arena.Choose(out firstGladiator);
+                    Console.Clear();
+                    arena.ShowAll();
                     arena.Choose(out secondGladiator); ;
+                    Console.Clear();
                     arena.Fight(firstGladiator, secondGladiator);
                 }
 
@@ -43,26 +46,26 @@ namespace _46_GladiatorFights
 
     class Arena
     {
-        private List<Gladiator> _warriors = new List<Gladiator>();
+        private List<Gladiator> _gladiators = new List<Gladiator>();
 
         public Arena()
         {
-            _warriors.Add(new Nord("Иона", 400, 100, 500, 0));
-            _warriors.Add(new Orc("Лоб", 800, 120, 200, 0));
-            _warriors.Add(new Khajiit("Карджо", 389, 83, 400, 0));
-            _warriors.Add(new Argonian("Джари-Ра", 300, 150, 350, 0));
-            _warriors.Add(new Breton("Эола", 291, 70, 200, 20));
-            _warriors.Add(new Altmer("Ондолемар", 200, 50, 100, -10));
+            _gladiators.Add(new Nord("Иона", 400, 100, 500, 0));
+            _gladiators.Add(new Orc("Лоб", 800, 120, 200, 0));
+            _gladiators.Add(new Khajiit("Карджо", 389, 83, 400, 0));
+            _gladiators.Add(new Argonian("Джари-Ра", 300, 150, 350, 0));
+            _gladiators.Add(new Breton("Эола", 291, 70, 200, 20));
+            _gladiators.Add(new Altmer("Ондолемар", 200, 50, 100, -10));
         }
 
         public void ShowAll()
         {
             Console.WriteLine("Список участников:");
 
-            for (int i = 0; i < _warriors.Count; i++)
+            for (int i = 0; i < _gladiators.Count; i++)
             {
                 Console.Write($"{i + 1}. ");
-                _warriors[i].ShowStats();
+                _gladiators[i].ShowStats();
                 Console.WriteLine("====================================================");
             }
 
@@ -71,12 +74,32 @@ namespace _46_GladiatorFights
 
         public void Choose(out Gladiator gladiator)
         {
-            Random random = new Random();
-            int gladiatorIndex = random.Next(_warriors.Count);
-            gladiator = _warriors[gladiatorIndex];
-            _warriors.RemoveAt(gladiatorIndex);
+            int gladiatorIndex;
+            Console.Write("Введите номер гладиатора: ");
+
+            while((gladiatorIndex = ReadInt() - 1) > _gladiators.Count)
+            {
+                Console.WriteLine("Такого гладиатора нет");
+            }
+
+            gladiator = _gladiators[gladiatorIndex];
+            _gladiators.RemoveAt(gladiatorIndex);
             Console.Write("Выбран боец: ");
             gladiator.ShowStats();
+            Console.ReadKey();
+        }
+
+        private int ReadInt()
+        {
+            int result;
+
+            while (int.TryParse(Console.ReadLine(), out result) == false)
+            {
+                Console.WriteLine("Неверный ввод числа!\nНеобходимо ввести целое число.");
+                Console.Write("Введите целое число: ");
+            }
+
+            return result;
         }
 
         public void Fight(Gladiator firstFighter, Gladiator secondFighter)
@@ -85,6 +108,9 @@ namespace _46_GladiatorFights
             float baseArmorFirst = firstFighter.Armor;
             float baseDamageSecond = secondFighter.Damage;
             float baseArmorSecond = secondFighter.Armor;
+
+            firstFighter.ShowStats();
+            secondFighter.ShowStats();
 
             while (firstFighter.Health > 0 && secondFighter.Health > 0)
             {
@@ -97,15 +123,17 @@ namespace _46_GladiatorFights
                 {
                     firstFighter.Attack(secondFighter);
                 }
+                
                 if (secondFighter.SkippingTurn > 0)
                 {
                     secondFighter.SkipTurn(-1);
-                    Console.WriteLine($"{firstFighter.Name} пропускает ход!");
+                    Console.WriteLine($"{secondFighter.Name} пропускает ход!");
                 }
                 else
                 {
                     secondFighter.Attack(firstFighter);
                 }
+                
                 firstFighter.ShowStats();
                 secondFighter.ShowStats();
                 Console.WriteLine("\n");
@@ -139,7 +167,7 @@ namespace _46_GladiatorFights
         public int AbilityRecharging { get; protected set; }
         public int AbilityDuration { get; protected set; }
         public int SkippingTurn { get; protected set; }
-        public bool SuccessfullDodge { get; protected set; }
+        public bool CanDodge { get; protected set; }
 
         public Gladiator(string name, int health, int damage, int armor, int magicResistance)
         {
@@ -216,9 +244,9 @@ namespace _46_GladiatorFights
 
         public void TakeDamage(float enemyDamage)
         {
-            if (SuccessfullDodge == true)
+            if (CanDodge == true)
             {
-                SuccessfullDodge = false;
+                CanDodge = false;
                 Console.WriteLine($"{Name} успешно увернулся от атаки");
             }
             else
@@ -296,9 +324,10 @@ namespace _46_GladiatorFights
             int dodgeChance=30;
             int chance = 100;
             int dodge = random.Next(0, chance);
+            
             if (dodge<=dodgeChance)
             {
-                SuccessfullDodge = true;
+                CanDodge = true;
             }
         }
     }
