@@ -11,30 +11,31 @@ namespace _46_GladiatorFights
         static void Main(string[] args)
         {
             ConsoleKeyInfo key;
+            ConsoleKey exitKey = ConsoleKey.Escape;
             bool isActive = true;            
 
             while (isActive)
             {
                 Console.Clear();
                 Console.WriteLine("Гладиаторские бои" +
-                    "\nEsc - Выход" +
+                    "\n"+exitKey+" - Выход" +
                     "\nAny key - Выбрать бойцов\n");
                 key = Console.ReadKey(true);
                 Arena arena = new Arena();
                 Gladiator firstGladiator;
                 Gladiator secondGladiator;
 
-                if(key.Key == ConsoleKey.Escape)
+                if(key.Key == exitKey)
                 {
                     isActive = false;
                 }
                 else
                 {
                     arena.ShowAll();
-                    arena.Choose(out firstGladiator);
+                    arena.ChooseGladiator(out firstGladiator);
                     Console.Clear();
                     arena.ShowAll();
-                    arena.Choose(out secondGladiator); ;
+                    arena.ChooseGladiator(out secondGladiator); ;
                     Console.Clear();
                     arena.Fight(firstGladiator, secondGladiator);
                 }
@@ -72,7 +73,7 @@ namespace _46_GladiatorFights
             Console.WriteLine();
         }
 
-        public void Choose(out Gladiator gladiator)
+        public void ChooseGladiator(out Gladiator gladiator)
         {
             int gladiatorIndex;
             Console.Write("Введите номер гладиатора: ");
@@ -133,19 +134,24 @@ namespace _46_GladiatorFights
                 secondFighter.ShowStats();
                 Console.WriteLine("\n");
 
-                if (firstFighter.Health <= 0 && secondFighter.Health <= 0)
+                CheckWinner(firstFighter.Health, secondFighter.Health, firstFighter.Name, secondFighter.Name);                
+            }
+        }
+
+        public void CheckWinner(float FirstfighterHealth, float SecondFighterHealth, string FirstFighterName, string SecondFighterName)
+        {
+                if (FirstfighterHealth <= 0 && SecondFighterHealth <= 0)
                 {
                     Console.WriteLine("Ничья, оба погибли");
                 }
-                else if (firstFighter.Health <= 0)
+                else if (FirstfighterHealth <= 0)
                 {
-                    Console.WriteLine($"{secondFighter.Name} победил!");
+                    Console.WriteLine($"{SecondFighterName} победил!");
                 }
-                else
+                else if (SecondFighterHealth <= 0)
                 {
-                    Console.WriteLine($"{firstFighter.Name} победил!");
+                    Console.WriteLine($"{FirstFighterName} победил!");
                 }
-            }
         }
     }
 
@@ -268,6 +274,8 @@ namespace _46_GladiatorFights
     class Nord : Gladiator
     {
         public Nord(string name, int health, int damage, int armor, int magicResistance) : base(name, health, damage, armor, magicResistance) { }
+        private int _abilityMovesRecharge = 4;
+        private int _skippingMoves = 2;
 
         public override void UsePower()
         {
@@ -277,14 +285,18 @@ namespace _46_GladiatorFights
 
         private void Shout()
         {
-            AbilityRecharging = 4;
-            SkippingTurn = 2;
+            AbilityRecharging = _abilityMovesRecharge;
+            SkippingTurn = _skippingMoves;
         }
     }
 
     class Orc : Gladiator
     {
         public Orc(string name, int health, int damage, int armor, int magicResistance) : base(name, health, damage, armor, magicResistance) { }
+        private int _damageMultiplier = 2;
+        private int _armorMultiplier = 2;
+        private int _abilityMovesRecharge = 3;
+        private int _abilityMovesDuration = 1;
 
         public override void UsePower()
         {
@@ -294,16 +306,19 @@ namespace _46_GladiatorFights
 
         public void CastBerserkerRage()
         {
-            Damage *= 2;
-            Armor *= 2;
-            AbilityRecharging = 3;
-            AbilityDuration = 1;
+            Damage *= _damageMultiplier;
+            Armor *= _armorMultiplier;
+            AbilityRecharging = _abilityMovesRecharge;
+            AbilityDuration = _abilityMovesDuration;
         }
     }
 
     class Khajiit : Gladiator
     {
         public Khajiit(string name, int health, int damage, int armor, int magicResistance) : base(name, health, damage, armor, magicResistance) { }
+        private Random _random = new Random();
+        private int _abilityMovesDuration = 1;
+        private int _dodgeChance = 30;
 
         public override void UsePower()
         {
@@ -313,14 +328,11 @@ namespace _46_GladiatorFights
 
         public void Dodge()
         {
-            Random random = new Random();
-            AbilityRecharging = 1;
-            AbilityDuration = 1;
-            int dodgeChance=30;
+            AbilityDuration = _abilityMovesDuration;
             int chance = 100;
-            int dodge = random.Next(0, chance);
+            int dodge = _random.Next(0, chance);
             
-            if (dodge<=dodgeChance)
+            if (dodge<= _dodgeChance)
             {
                 CanDodge = true;
             }
@@ -330,6 +342,8 @@ namespace _46_GladiatorFights
     class Argonian : Gladiator
     {
         public Argonian(string name, int health, int damage, int armor, int magicResistance) : base(name, health, damage, armor, magicResistance) { }
+        private int _healthRestoration = 150;
+        private int _abilityMovesRecharge = 2;
 
         public override void UsePower()
         {
@@ -339,14 +353,19 @@ namespace _46_GladiatorFights
 
         public void CastHistskin()
         {
-            Health += 150;
-            AbilityRecharging = 2;
+            Health += _healthRestoration;
+            AbilityRecharging = _abilityMovesRecharge;
         }
     }
 
     class Breton : Gladiator
     {
         public Breton(string name, int health, int damage, int armor, int magicResistance) : base(name, health, damage, armor, magicResistance) { }
+        private int _damageIncrease = 50;
+        private int _healthRestoration = 70;
+        private int _magicResistanceIncrease = 20;
+        private int _abilityMovesRecharge = 5;
+        private int _abilityMovesDuration = 3;
 
         public override void UsePower()
         {
@@ -356,17 +375,19 @@ namespace _46_GladiatorFights
 
         public void CastStormCloak()
         {
-            Damage += 50;
-            Health += 70;
-            MagicResistance += 20;
-            AbilityRecharging = 5;
-            AbilityDuration = 3;
+            Damage += _damageIncrease;
+            Health += _healthRestoration;
+            MagicResistance += _magicResistanceIncrease;
+            AbilityRecharging = _abilityMovesRecharge;
+            AbilityDuration = _abilityMovesDuration;
         }
     }
 
     class Altmer : Gladiator
     {
         public Altmer(string name, int health, int damage, int armor, int magicResistance) : base(name, health, damage, armor, magicResistance) { }
+        private int _magicDamage = 150;
+        private int _abilityMovesRecharge = 3;
 
         public override void UsePower()
         {
@@ -376,8 +397,10 @@ namespace _46_GladiatorFights
 
         public void CastFireball()
         {
-            MagicDamage = 150;
-            AbilityRecharging = 5;
+            MagicDamage = _magicDamage;
+            AbilityRecharging = _abilityMovesRecharge;
         }
     }
 }
+
+    
