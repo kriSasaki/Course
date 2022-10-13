@@ -32,10 +32,10 @@ namespace _46_GladiatorFights
                 else
                 {
                     arena.ShowAll();
-                    arena.ChooseGladiator(out firstGladiator);
+                    firstGladiator = arena.ChooseGladiator();
                     Console.Clear();
                     arena.ShowAll();
-                    arena.ChooseGladiator(out secondGladiator); ;
+                    secondGladiator = arena.ChooseGladiator();
                     Console.Clear();
                     arena.Fight(firstGladiator, secondGladiator);
                 }
@@ -73,14 +73,17 @@ namespace _46_GladiatorFights
             Console.WriteLine();
         }
 
-        public void ChooseGladiator(out Gladiator gladiator)
+        public Gladiator ChooseGladiator()
         {
-            int gladiatorIndex;
+            Gladiator gladiator;           
             Console.Write("Введите номер гладиатора: ");
+            int gladiatorIndex = ReadInt() - 1;
 
-            while((gladiatorIndex = ReadInt() - 1) > _gladiators.Count && (gladiatorIndex = ReadInt() - 1) < 1)
+            while (gladiatorIndex > _gladiators.Count || gladiatorIndex < 0)
             {
                 Console.WriteLine("Такого гладиатора нет");
+                Console.Write("Введите номер гладиатора: ");
+                gladiatorIndex = ReadInt() - 1;
             }
 
             gladiator = _gladiators[gladiatorIndex];
@@ -88,6 +91,8 @@ namespace _46_GladiatorFights
             Console.Write("Выбран боец: ");
             gladiator.ShowStats();
             Console.ReadKey();
+
+            return gladiator;
         }
 
         private int ReadInt()
@@ -134,23 +139,24 @@ namespace _46_GladiatorFights
                 secondFighter.ShowStats();
                 Console.WriteLine("\n");
 
-                CheckWinner(firstFighter.Health, secondFighter.Health, firstFighter.Name, secondFighter.Name);                
             }
+
+            AnnounceWinner(firstFighter, secondFighter);                
         }
 
-        public void CheckWinner(float FirstfighterHealth, float SecondFighterHealth, string FirstFighterName, string SecondFighterName)
+        public void AnnounceWinner(Gladiator firstFighter, Gladiator secondFighter)
         {
-                if (FirstfighterHealth <= 0 && SecondFighterHealth <= 0)
+                if (firstFighter.Health <= 0 && secondFighter.Health <= 0)
                 {
                     Console.WriteLine("Ничья, оба погибли");
                 }
-                else if (FirstfighterHealth <= 0)
+                else if (firstFighter.Health <= 0)
                 {
-                    Console.WriteLine($"{SecondFighterName} победил!");
+                    Console.WriteLine($"{secondFighter.Name} победил!");
                 }
-                else if (SecondFighterHealth <= 0)
+                else if (secondFighter.Health <= 0)
                 {
-                    Console.WriteLine($"{FirstFighterName} победил!");
+                    Console.WriteLine($"{firstFighter.Name} победил!");
                 }
         }
     }
@@ -168,7 +174,6 @@ namespace _46_GladiatorFights
         public int AbilityRecharging { get; protected set; }
         public int AbilityDuration { get; protected set; }
         public int SkippingTurn { get; protected set; }
-        public bool CanDodge { get; protected set; }
         
         public Gladiator(string name, int health, int damage, int armor, int magicResistance)
         {
@@ -187,29 +192,8 @@ namespace _46_GladiatorFights
                 $"\n---------------------------------------------");
         }
 
-        public void Attack(Gladiator enemyFighter)
+        public virtual void Attack(Gladiator enemyFighter)
         {
-            if (AbilityRecharging == 0)
-            {
-                UsePower();
-
-                if (SkippingTurn > 0)
-                {
-                    enemyFighter.SkipTurn(SkippingTurn);
-                    SkipTurn(-SkippingTurn);
-                }
-            }
-            else
-            {
-                ReduceRecharging();
-            }
-
-            if (MagicDamage > 0)
-            {
-                enemyFighter.TakeMagicDamage(MagicDamage);
-                MagicDamage = 0;
-            }
-
             enemyFighter.TakeDamage(Damage);
 
             if (AbilityDuration > 0)
@@ -227,13 +211,13 @@ namespace _46_GladiatorFights
             SkippingTurn += steps;
         }
 
-        public void NormalizeStats()
+        private void NormalizeStats()
         {
             Armor = _baseArmor;
             Damage = _baseDamage;
         }
         
-        public void ReduceDuration()
+        private void ReduceDuration()
         {
             AbilityDuration -= 1;
         }
@@ -243,7 +227,109 @@ namespace _46_GladiatorFights
             AbilityRecharging -= 1;
         }
 
-        public void TakeDamage(float enemyDamage)
+        public virtual void TakeDamage(float enemyDamage)
+        {
+            if (enemyDamage >= Armor)
+            {
+                Health -= enemyDamage;
+            }
+            else
+            {
+                Health -= enemyDamage / (Armor / enemyDamage);
+            }
+        }
+
+        public void TakeMagicDamage(float enemyMagicDamage)
+        {
+            Health -= enemyMagicDamage - (enemyMagicDamage * MagicResistance / 100);
+        }
+    }
+
+    class Nord : Gladiator
+    {
+        private int _abilityMovesRecharge = 4;
+        private int _skippingMoves = 2;
+        public Nord(string name, int health, int damage, int armor, int magicResistance) : base(name, health, damage, armor, magicResistance) { }
+
+        private void UsePower(Gladiator enemyFighter)
+        {
+            Console.WriteLine($"\t{Name} использует крик \"Безжалостная сила\"");
+            Shout(enemyFighter);
+        }
+
+        private void Shout(Gladiator enemyFighter) 
+        {
+            AbilityRecharging = _abilityMovesRecharge;
+            enemyFighter.SkipTurn(_skippingMoves);
+        }
+
+        public override void Attack(Gladiator enemyFighter)
+        {
+            if (AbilityRecharging == 0)
+            {
+                UsePower(enemyFighter);
+            }
+            else
+            {
+                ReduceRecharging();
+            }
+
+            base.Attack(enemyFighter);
+        }
+    }
+
+    class Orc : Gladiator
+    {
+        private int _damageMultiplier = 2;
+        private int _armorMultiplier = 2;
+        private int _abilityMovesRecharge = 3;
+        private int _abilityMovesDuration = 1;
+        public Orc(string name, int health, int damage, int armor, int magicResistance) : base(name, health, damage, armor, magicResistance) { }
+
+        private void UsePower(Gladiator enemyFighter)
+        {
+            Console.WriteLine($"\t{Name} использует способность \"Ярость берсерка\"");
+            CastBerserkerRage();
+        }
+
+        private void CastBerserkerRage()
+        {
+            Damage *= _damageMultiplier;
+            Armor *= _armorMultiplier;
+            AbilityRecharging = _abilityMovesRecharge;
+            AbilityDuration = _abilityMovesDuration;
+        }
+
+        public override void Attack(Gladiator enemyFighter)
+        {
+            if (AbilityRecharging == 0)
+            {
+                UsePower(enemyFighter);
+            }
+            else
+            {
+                ReduceRecharging();
+            }
+
+            base.Attack(enemyFighter);
+        }
+    }
+
+    class Khajiit : Gladiator
+    {
+        private Random _random = new Random();
+        private int _abilityMovesDuration = 1;
+        private int _dodgeChance = 30;
+        public bool CanDodge { get; protected set; }
+        public Khajiit(string name, int health, int damage, int armor, int magicResistance) : base(name, health, damage, armor, magicResistance) { }
+
+        private void UsePower()
+        {
+            Console.WriteLine($"\t{Name} пытается увернуться от атаки");
+            Dodge();
+        }
+
+        public override void TakeDamage(float enemyDamage)
         {
             if (CanDodge == true)
             {
@@ -252,81 +338,11 @@ namespace _46_GladiatorFights
             }
             else
             {
-                if (enemyDamage >= Armor)
-                {
-                    Health -= enemyDamage;
-                }
-                else
-                {
-                    Health -= enemyDamage / (Armor / enemyDamage);
-                }
+                base.TakeDamage(enemyDamage);
             }
         }
 
-        public void TakeMagicDamage(float enemyMagicDamage)
-        {
-            Health -= enemyMagicDamage - (enemyMagicDamage * MagicResistance / 100);
-        }
-
-        public virtual void UsePower() { }
-    }
-
-    class Nord : Gladiator
-    {
-        public Nord(string name, int health, int damage, int armor, int magicResistance) : base(name, health, damage, armor, magicResistance) { }
-        private int _abilityMovesRecharge = 4;
-        private int _skippingMoves = 2;
-
-        public override void UsePower()
-        {
-            Console.WriteLine($"\t{Name} использует крик \"Безжалостная сила\"");
-            Shout();
-        }
-
-        private void Shout()
-        {
-            AbilityRecharging = _abilityMovesRecharge;
-            SkippingTurn = _skippingMoves;
-        }
-    }
-
-    class Orc : Gladiator
-    {
-        public Orc(string name, int health, int damage, int armor, int magicResistance) : base(name, health, damage, armor, magicResistance) { }
-        private int _damageMultiplier = 2;
-        private int _armorMultiplier = 2;
-        private int _abilityMovesRecharge = 3;
-        private int _abilityMovesDuration = 1;
-
-        public override void UsePower()
-        {
-            Console.WriteLine($"\t{Name} использует способность \"Ярость берсерка\"");
-            CastBerserkerRage();
-        }
-
-        public void CastBerserkerRage()
-        {
-            Damage *= _damageMultiplier;
-            Armor *= _armorMultiplier;
-            AbilityRecharging = _abilityMovesRecharge;
-            AbilityDuration = _abilityMovesDuration;
-        }
-    }
-
-    class Khajiit : Gladiator
-    {
-        public Khajiit(string name, int health, int damage, int armor, int magicResistance) : base(name, health, damage, armor, magicResistance) { }
-        private Random _random = new Random();
-        private int _abilityMovesDuration = 1;
-        private int _dodgeChance = 30;
-
-        public override void UsePower()
-        {
-            Console.WriteLine($"\t{Name} пытается увернуться от атаки");
-            Dodge();
-        }
-
-        public void Dodge()
+        private void Dodge()
         {
             AbilityDuration = _abilityMovesDuration;
             int chance = 100;
@@ -337,43 +353,71 @@ namespace _46_GladiatorFights
                 CanDodge = true;
             }
         }
+
+        public override void Attack(Gladiator enemyFighter)
+        {
+            if (AbilityRecharging == 0)
+            {
+                UsePower();
+            }
+            else
+            {
+                ReduceRecharging();
+            }
+
+            base.Attack(enemyFighter);
+        }
     }
 
     class Argonian : Gladiator
     {
-        public Argonian(string name, int health, int damage, int armor, int magicResistance) : base(name, health, damage, armor, magicResistance) { }
         private int _healthRestoration = 150;
         private int _abilityMovesRecharge = 2;
+        public Argonian(string name, int health, int damage, int armor, int magicResistance) : base(name, health, damage, armor, magicResistance) { }
 
-        public override void UsePower()
+        private void UsePower()
         {
             Console.WriteLine($"\t{Name} использует способность \"Кора Хиста\"");
             CastHistskin();
         }
 
-        public void CastHistskin()
+        private void CastHistskin()
         {
             Health += _healthRestoration;
             AbilityRecharging = _abilityMovesRecharge;
+        }
+
+        public override void Attack(Gladiator enemyFighter)
+        {
+            if (AbilityRecharging == 0)
+            {
+                UsePower();
+            }
+            else
+            {
+                ReduceRecharging();
+            }
+
+            base.Attack(enemyFighter);
         }
     }
 
     class Breton : Gladiator
     {
-        public Breton(string name, int health, int damage, int armor, int magicResistance) : base(name, health, damage, armor, magicResistance) { }
         private int _damageIncrease = 50;
         private int _healthRestoration = 70;
         private int _magicResistanceIncrease = 20;
         private int _abilityMovesRecharge = 5;
         private int _abilityMovesDuration = 3;
+        public Breton(string name, int health, int damage, int armor, int magicResistance) : base(name, health, damage, armor, magicResistance) { }
 
-        public override void UsePower()
+        private void UsePower()
         {
             Console.WriteLine($"\t{Name} использует способность \"Стормовой плащ\"");
             CastStormCloak();
         }
 
-        public void CastStormCloak()
+        private void CastStormCloak()
         {
             Damage += _damageIncrease;
             Health += _healthRestoration;
@@ -381,24 +425,53 @@ namespace _46_GladiatorFights
             AbilityRecharging = _abilityMovesRecharge;
             AbilityDuration = _abilityMovesDuration;
         }
+
+        public override void Attack(Gladiator enemyFighter)
+        {
+            if (AbilityRecharging == 0)
+            {
+                UsePower();
+            }
+            else
+            {
+                ReduceRecharging();
+            }
+
+            base.Attack(enemyFighter);
+        }
     }
 
     class Altmer : Gladiator
     {
-        public Altmer(string name, int health, int damage, int armor, int magicResistance) : base(name, health, damage, armor, magicResistance) { }
         private int _magicDamage = 150;
         private int _abilityMovesRecharge = 3;
+        public Altmer(string name, int health, int damage, int armor, int magicResistance) : base(name, health, damage, armor, magicResistance) { }
 
-        public override void UsePower()
+        private void UsePower(Gladiator enemyFighter)
         {
             Console.WriteLine($"\t{Name} использует способность \"Огненный шар\"");
-            CastFireball();
+            CastFireball(enemyFighter);
         }
 
-        public void CastFireball()
+        private void CastFireball(Gladiator enemyFighter)
         {
             MagicDamage = _magicDamage;
             AbilityRecharging = _abilityMovesRecharge;
+            enemyFighter.TakeMagicDamage(MagicDamage); 
+        }
+
+        public override void Attack(Gladiator enemyFighter)
+        {
+            if (AbilityRecharging == 0)
+            {
+                UsePower(enemyFighter);
+            }
+            else
+            {
+                ReduceRecharging();
+            }
+
+            base.Attack(enemyFighter);
         }
     }
 }
