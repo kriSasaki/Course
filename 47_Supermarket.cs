@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +15,10 @@ namespace _47_Supermarket
 
             while (isWork)
             {
-                Console.WriteLine($"В очереди {supermarket.ShowQueueAmount()} человек");
+                const string CommandCreateQueue = "1";
+                const string CommandServeBuyers = "2";
+                const string CommandExit = "3";
+                Console.WriteLine($"В очереди {supermarket.GetQueueAmount()} человек. За сеанс магазин заработал {supermarket.Money} рублей.");
                 Console.WriteLine("\n1 - создать очередь клиентов." +
                     "\n2 - обслужить очередь клиентов." +
                     "\n3 - выйти.");
@@ -24,13 +27,13 @@ namespace _47_Supermarket
 
                 switch (userInput)
                 {
-                    case "1":
+                    case CommandCreateQueue:
                         supermarket.CreateQueue();
                         break;
-                    case "2":
+                    case CommandServeBuyers:
                         supermarket.ServeBuyers();
                         break;
-                    case "3":
+                    case CommandExit:
                         isWork = false;
                         break;
                     default:
@@ -38,6 +41,7 @@ namespace _47_Supermarket
                         break;
                 }
             }
+
         }
     }
 
@@ -57,11 +61,25 @@ namespace _47_Supermarket
     {
         private List<Product> _cart;
         public int Money { get; private set; }
-        
+
         public Buyer(List<Product> cart, int money)
         {
             _cart = cart;
             Money = money;
+        }
+        public void BuyProducts(out int sumOfProducts)
+        {
+            sumOfProducts = GetPriceFullCart();
+            ShowProducts();
+            Console.WriteLine($"Сумма всей корзины - {sumOfProducts}. У покупателя {Money}");
+
+            if (Money < sumOfProducts)
+            {
+                RemoveProducts();
+                sumOfProducts = GetPriceFullCart();
+            }
+
+            Console.WriteLine($"Покупатель заплатил {sumOfProducts}\n");
         }
 
         private int GetPriceFullCart()
@@ -80,27 +98,14 @@ namespace _47_Supermarket
         {
             Console.WriteLine("Все продукты: ");
 
-            foreach(var product in _cart)
+            foreach (var product in _cart)
             {
                 Console.WriteLine($"{product.Title} - {product.Price} рублей.");
             }
         }
 
-        public void BuyProducts()
-        {
-            int sumOfProducts = GetPriceFullCart();
-            ShowProducts();
-            Console.WriteLine($"Сумма всей корзины - {sumOfProducts}. У покупателя {Money}");
 
-            if (Money < sumOfProducts)
-            {
-                RemoveProducts(sumOfProducts);
-            }
-            
-            Console.WriteLine($"Покупатель заплатил {sumOfProducts}\n");
-        }
-
-        private void RemoveProducts(int sumOfProducts)
+        private void RemoveProducts()
         {
             while (GetPriceFullCart() > Money)
             {
@@ -122,6 +127,8 @@ namespace _47_Supermarket
         private Queue<Buyer> _buyers = new Queue<Buyer>();
         private List<Product> _products = new List<Product>();
         private Random _random = new Random();
+        private bool _isServingBuyers;
+        public int Money { get; private set; }
 
         public Supermarket()
         {
@@ -133,28 +140,47 @@ namespace _47_Supermarket
             _products.Add(new Product("Булочка", 40));
         }
 
-        public int ShowQueueAmount()
+        public int GetQueueAmount()
         {
-            int SumOfBuyers = 0;
-            
-            foreach ( var buyer in _buyers)
-            {
-                SumOfBuyers++;
-            }
+            int sumOfBuyers = _buyers.Count;
 
-            return SumOfBuyers;
+            return sumOfBuyers;
         }
-
         public void CreateQueue()
         {
-            int minimumCountClient = 2;
-            int maximumCountClient = 10;
-            int countClient = _random.Next(minimumCountClient, maximumCountClient);
-
-            for (int i = 0; i < countClient; i++)
+            if (_isServingBuyers == false)
             {
-                _buyers.Enqueue(CreateBuyer());
+                int minimumCountClient = 2;
+                int maximumCountClient = 10;
+                int countClient = _random.Next(minimumCountClient, maximumCountClient);
+
+                for (int i = 0; i < countClient; i++)
+                {
+                    _buyers.Enqueue(CreateBuyer());
+                }
+
+                _isServingBuyers = true;
             }
+            else
+            {
+                Console.WriteLine("В магазине уже есть очередь.");
+            }
+        }
+        public void ServeBuyers()
+        {
+            while (_buyers.Count > 0)
+            {
+                _buyers.Dequeue().BuyProducts(out int sumOfProducts);
+                PutCashInRegister(sumOfProducts);
+                Console.ReadKey();
+            }
+
+            _isServingBuyers = false;
+        }
+
+        private void PutCashInRegister(int money)
+        {
+            Money += money;
         }
 
         private Buyer CreateBuyer()
@@ -175,13 +201,5 @@ namespace _47_Supermarket
             return new Buyer(products, countMoney);
         }
 
-        public void ServeBuyers()
-        {
-            while (_buyers.Count > 0)
-            {
-                _buyers.Dequeue().BuyProducts();
-                Console.ReadKey();
-            }
-        }
     }
 }
