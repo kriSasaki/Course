@@ -19,9 +19,9 @@ namespace _47_Supermarket
                 const string CommandServeBuyers = "2";
                 const string CommandExit = "3";
                 Console.WriteLine($"В очереди {supermarket.GetQueueAmount()} человек. За сеанс магазин заработал {supermarket.Money} рублей.");
-                Console.WriteLine("\n1 - создать очередь клиентов." +
-                    "\n2 - обслужить очередь клиентов." +
-                    "\n3 - выйти.");
+                Console.WriteLine($"\n{CommandCreateQueue} - создать очередь клиентов." +
+                    $"\n{CommandServeBuyers} - обслужить очередь клиентов." +
+                    $"\n{CommandExit} - выйти.");
                 string userInput = Console.ReadLine();
                 Console.Clear();
 
