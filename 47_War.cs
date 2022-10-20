@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +18,8 @@ namespace _47_War
 
     class FieldOfBattle
     {
+        private Fighter _firstFighter;
+        private Fighter _secondFighter;
         public Country _firstCountry { get; protected set; }
         public Country _secondCountry { get; protected set; }
 
@@ -34,14 +36,61 @@ namespace _47_War
             
             while (_firstCountry.GetPlatoonNumber() > 0 && _secondCountry.GetPlatoonNumber() > 0)
             {
-
-
+                Fight();
+                Console.ReadKey();
             }
+
+            AnnounceWinner(_firstCountry, _secondCountry);
         }
 
         private void Fight()
         {
+            _firstFighter = _firstCountry.SendFighter();
+            Console.WriteLine($"Страна {_firstCountry.Name} отправила бойца {_firstFighter.Name}");
+            _secondFighter = _secondCountry.SendFighter();
+            Console.WriteLine($"Страна {_secondCountry.Name} отправила бойца {_secondFighter.Name}");
 
+            while (_firstFighter.Health>0 && _secondFighter.Health > 0)
+            {
+                _firstFighter.Attack(_secondFighter);
+                _secondFighter.Attack(_firstFighter);
+            }
+
+            AnnounceWinner(_firstFighter, _secondFighter);
+        }
+
+        private void AnnounceWinner(Fighter firstFighter, Fighter secondFighter)
+        {
+            if (firstFighter.Health <= 0 && secondFighter.Health <= 0)
+            {
+                Console.WriteLine("Ничья, оба погибли\n=========================================");
+            }
+            else if (firstFighter.Health <= 0)
+            {
+                _firstCountry.RemoveFighter(firstFighter);
+                Console.WriteLine($"{secondFighter.Name} победил!\n=========================================");
+            }
+            else
+            {
+                _secondCountry.RemoveFighter(secondFighter);
+                Console.WriteLine($"{firstFighter.Name} победил!\n=========================================");
+            }
+        }
+
+        private void AnnounceWinner(Country firstCountry, Country secondCountry)
+        {
+            if (firstCountry.GetPlatoonNumber() == 0 && secondCountry.GetPlatoonNumber() == 0)
+            {
+                Console.WriteLine("Ничья, обе страны потерпели поражение");
+            }
+            else if (firstCountry.GetPlatoonNumber() <= 0)
+            {
+                Console.WriteLine($"страна {firstCountry.Name} победила!");
+            }
+            else
+            {
+                Console.WriteLine($"Страна {secondCountry.Name} победила!");
+            }
         }
     }
 
@@ -69,12 +118,22 @@ namespace _47_War
             _platoon.ShowFighters();
             Console.WriteLine("=========================================");
         }
+
+        public Fighter SendFighter()
+        {
+            return _platoon.SendFighter();
+        }
+
+        public void RemoveFighter(Fighter fighter)
+        {
+            _platoon.RemoveFighter(fighter);
+        }
     }
 
     class Platoon
     {
         private List<Fighter> _fighters = new List<Fighter>();
-        private Random _random = new Random();
+        private static Random _random = new Random();
 
         public Platoon()
         {
@@ -94,6 +153,18 @@ namespace _47_War
             int fightersNumber = _fighters.Count;
 
             return fightersNumber;
+        }
+
+        public Fighter SendFighter()
+        {
+            Fighter sentFighter = _fighters[_random.Next(0, _fighters.Count)];
+
+            return sentFighter;
+        }
+
+        public void RemoveFighter(Fighter fighter)
+        {
+            _fighters.Remove(fighter);
         }
 
         private void CreatePlatoon(int numberOfSoldiers, List<Fighter> soldier)
@@ -142,14 +213,15 @@ namespace _47_War
             Name = name;
         }
 
+        public virtual void Attack(Fighter enemyFighter)
+        {
+            enemyFighter.TakeDamage(Damage);
+        }
+
         public virtual void TakeDamage(int damageSoldier)
         {
             Health -= damageSoldier;
-            Console.WriteLine();
-            Console.WriteLine($"{Name} нанес {damageSoldier} урона");
         }
-
-        protected virtual void UsePower() { }
     }
 
     class Soldier : Fighter
@@ -163,7 +235,13 @@ namespace _47_War
 
         public Healer(string name, int health, int damage) : base(health, damage, name) { }
 
-        protected override void UsePower()
+        public override void Attack(Fighter enemyFighter)
+        {
+            UsePower();
+            base.Attack(enemyFighter);
+        }
+
+        private void UsePower()
         {
             Console.WriteLine($"{Name} принимает медикаменты");
             Health += _healthHeal;
@@ -172,7 +250,7 @@ namespace _47_War
 
     class Tank : Fighter
     {
-        private int _damageReduction = 5;
+        private int _damageReduction = 10;
         
         public Tank(string name, int health, int damage) : base(health, damage, name) { }
 
@@ -187,7 +265,13 @@ namespace _47_War
         private int _damageBoost = 25;
         public Sniper(string name, int health, int damage) : base(health, damage, name) { }
 
-        protected override void UsePower()
+        public override void Attack(Fighter enemyFighter)
+        {
+            UsePower();
+            base.Attack(enemyFighter);
+        }
+
+        private void UsePower()
         {
             Console.WriteLine($"{Name} метко прицеливается");
             Damage += _damageBoost;
