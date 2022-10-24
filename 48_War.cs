@@ -11,7 +11,7 @@ namespace _47_War
         static void Main(string[] args)
         {
             FieldOfBattle fieldOfBattle = new FieldOfBattle();
-            Console.WriteLine($"Битва между странами {fieldOfBattle._firstCountry.Name} и {fieldOfBattle._secondCountry.Name}");
+            Console.WriteLine($"Битва между странами");
             fieldOfBattle.BeginBattle();
         }
     }
@@ -20,8 +20,8 @@ namespace _47_War
     {
         private Fighter _firstFighter;
         private Fighter _secondFighter;
-        public Country _firstCountry { get; protected set; }
-        public Country _secondCountry { get; protected set; }
+        private Country _firstCountry;
+        private Country _secondCountry;
 
         public FieldOfBattle()
         {
