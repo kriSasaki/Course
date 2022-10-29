@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -46,20 +46,9 @@ namespace _48_Aquarium
                         Console.WriteLine("Неверный ввод.");
                         break;
                 }
+                
+                aquarium.RemoveDeadFishes();
             }
-        }
-
-        private int ReadInt()
-        {
-            int result;
-
-            while (int.TryParse(Console.ReadLine(), out result) == false)
-            {
-                Console.WriteLine("Неверный ввод числа!\nНеобходимо ввести целое число.");
-                Console.Write("Введите целое число: ");
-            }
-
-            return result;
         }
     }
 
@@ -134,10 +123,8 @@ namespace _48_Aquarium
             {
                 foreach (var fish in _aquarium)
                 {
-                    fish.GetOld();
-                    VerifyFish(fish);
+                    fish.GrowOld();
                 }
-                RemoveDeadFishes();
             }
             else
             {
@@ -145,18 +132,10 @@ namespace _48_Aquarium
             }
         }
 
-        private void VerifyFish(Fish fish)
+        public void RemoveDeadFishes()
         {
-            if (fish.Age > fish.MaxAge)
-            {
-                fish.Die();
-            }
-        }
-
-        private void RemoveDeadFishes()
-        {
-            Console.WriteLine($"Рыб умерло за ход: {_aquarium.Count(x => x.IsAlive == false)}.");
-            _aquarium.RemoveAll(x => x.IsAlive == false);
+            Console.WriteLine($"Рыб умерло за ход: {_aquarium.Count(fish => fish.IsAlive == false)}.");
+            _aquarium.RemoveAll(fish => fish.IsAlive == false);
         }
 
         private int ReadInt()
@@ -180,26 +159,24 @@ namespace _48_Aquarium
         public int MaxAge { get; private set; }
         public string Name { get; private set; }
         public int Age { get; private set; }
-        public bool IsAlive { get; private set; }
+        public bool IsAlive => Age < MaxAge;
 
 
         public Fish(string name, int age)
         {
-            IsAlive = true;
             Name = name;
             Age = age;
-            MaxAge = _random.Next(10, 20);
-            _rateOfAging = _random.Next(1, 3);
+            int minAge = 10;
+            int maxAge = 10;
+            MaxAge = _random.Next(minAge, maxAge);
+            int minRateOfAging = 1;
+            int maxRateOfAging = 3;
+            _rateOfAging = _random.Next(minRateOfAging, maxRateOfAging);
         }
 
-        public void GetOld()
+        public void GrowOld()
         {
             Age += _rateOfAging;
-        }
-
-        public void Die()
-        {
-            IsAlive = false;
         }
     }
 }
