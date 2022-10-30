@@ -11,9 +11,9 @@ namespace _48_Aquarium
         static void Main(string[] args)
         {
             Aquarium aquarium = new Aquarium();
-            bool IsWork = true;
+            bool isWork = true;
 
-            while (IsWork)
+            while (isWork)
             {
                 const string CommandAddFish = "1";
                 const string CommandRemoveFish = "2";
@@ -40,7 +40,7 @@ namespace _48_Aquarium
                         aquarium.SkipYear();
                         break;
                     case CommandExit:
-                        IsWork = false;
+                        isWork = false;
                         break;
                     default:
                         Console.WriteLine("Неверный ввод.");
@@ -111,7 +111,16 @@ namespace _48_Aquarium
 
         public void RemoveFish()
         {
+            Console.Write("Введите номер рыбки: ");
             int index = ReadInt() - 1;
+
+            while(index >= _aquarium.Count || index < 0)
+            {
+                Console.WriteLine("Такой рыбки нет");
+                Console.Write("Введите номер рыбки: ");
+                index = ReadInt() - 1;
+            }
+
             Console.WriteLine($"Рыбка под номером {index+1} {_aquarium[index].Name} убрана из аквариума");
             _aquarium.Remove(_aquarium[index]);
             SkipYear();
