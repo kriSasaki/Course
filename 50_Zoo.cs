@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -46,8 +46,8 @@ namespace _50_Zoo
 
         public Zoo()
         {
-            int minAmountOfAviaries = 3;
-            int maxAmountOfAviaries = 6;
+            int minAmountOfAviaries = 4;
+            int maxAmountOfAviaries = 10;
             int amountOfAviaries = _random.Next(minAmountOfAviaries, maxAmountOfAviaries);
             CreateAviaries(amountOfAviaries);
         }
@@ -112,11 +112,12 @@ namespace _50_Zoo
 
         public void CreateAviary(int amountOfAnimals)
         {
-            string animalType = GetAnimalType();
+            TypesOfAnimals type = GetAnimalType();
+
 
             for (int i=0; i<amountOfAnimals; i++)
             {
-                _animals.Add(new Animal(animalType));
+                _animals.Add(new Animal(type));
             }
         }
 
@@ -130,26 +131,26 @@ namespace _50_Zoo
             }
         }
 
-        private string GetAnimalType()
+        private TypesOfAnimals GetAnimalType()
         {
-            return ((TypesOfAnimals)_random.Next(0, Enum.GetValues(typeof(TypesOfAnimals)).Length)).ToString();
+            return ((TypesOfAnimals)_random.Next(Enum.GetValues(typeof(TypesOfAnimals)).Length));
         }
     }
 
     class Animal
     {
         private static Random _random = new Random();
-        public string Type { get; private set; }
+        public TypesOfAnimals Type { get; private set; }
         public string Gender { get; private set; }
         public string Voice { get; private set; }
 
 
 
-        public Animal(string type)
+        public Animal(TypesOfAnimals type)
         {
             Type = type;
             Gender = GetGender();
-            Voice = GetVoice(type);
+            Voice = GetVoice((int)type);
         }
 
         private string GetGender()
@@ -168,25 +169,27 @@ namespace _50_Zoo
             }
         }
 
-        private string GetVoice(string type)
+        private string GetVoice(int type)
         {
-            switch (type)
+            TypesOfAnimals typeOfAnimal = (TypesOfAnimals)type;
+
+            switch (typeOfAnimal)
             {
-                case "Elephant":
+                case TypesOfAnimals.Elephant:
                     return "Слон трубит";
-                case "Wolf":
+                case TypesOfAnimals.Wolf:
                     return "Воет";
-                case "Monkey":
+                case TypesOfAnimals.Monkey:
                     return "Кричит";
-                case "Giraffe":
+                case TypesOfAnimals.Giraffe:
                     return "Издает жирафьи звуки";
-                case "Fox":
+                case TypesOfAnimals.Fox:
                     return "яп-яп-яап";
-                case "Lemur":
+                case TypesOfAnimals.Lemur:
                     return "Мяу";
-                case "Zebra":
+                case TypesOfAnimals.Zebra:
                     return "Голос зебры в точности имитирует звук скользящего по льду камня, брошенного с силой... ";
-                case "Rhinoceros":
+                case TypesOfAnimals.Rhinoceros:
                     return "Рычит";
             }
 
