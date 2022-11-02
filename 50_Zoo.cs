@@ -168,8 +168,6 @@ namespace _50_Zoo
         public TypesOfAnimals Type { get; private set; }
         public string Gender { get; private set; }
 
-
-
         public Animal(TypesOfAnimals type)
         {
             Type = type;
@@ -191,7 +189,6 @@ namespace _50_Zoo
                 return "Female";
             }
         }
-
     }    
 }
 
