@@ -98,7 +98,7 @@ namespace _50_Zoo
 
     class Aviary
     {
-        private List<Animal> _animals = new List<Animal>();
+        private Dictionary<Animal, string> _animals = new Dictionary<Animal, string>();
         private static Random _random = new Random();
         public string AnimalsType { get; private set; }
 
@@ -117,7 +117,7 @@ namespace _50_Zoo
 
             for (int i=0; i<amountOfAnimals; i++)
             {
-                _animals.Add(new Animal(type));
+                _animals.Add(new Animal(type), GetVoice(type));
             }
         }
 
@@ -127,53 +127,13 @@ namespace _50_Zoo
 
             foreach(var animal in _animals)
             {
-                Console.WriteLine($"{animal.Type}, {animal.Gender}, говорит '{animal.Voice}'");
+                Console.WriteLine($"{animal.Key.Type}, {animal.Key.Gender}, говорит '{animal.Value}'");
             }
         }
 
-        private TypesOfAnimals GetAnimalType()
+        private string GetVoice(TypesOfAnimals type)
         {
-            return ((TypesOfAnimals)_random.Next(Enum.GetValues(typeof(TypesOfAnimals)).Length));
-        }
-    }
-
-    class Animal
-    {
-        private static Random _random = new Random();
-        public TypesOfAnimals Type { get; private set; }
-        public string Gender { get; private set; }
-        public string Voice { get; private set; }
-
-
-
-        public Animal(TypesOfAnimals type)
-        {
-            Type = type;
-            Gender = GetGender();
-            Voice = GetVoice((int)type);
-        }
-
-        private string GetGender()
-        {
-            int maleGender = 0;
-            int femaleGender = 2;
-            int gender = _random.Next(maleGender, femaleGender);
-
-            if (gender == maleGender)
-            {
-                return "Male";
-            }
-            else
-            {
-                return "Female";
-            }
-        }
-
-        private string GetVoice(int type)
-        {
-            TypesOfAnimals typeOfAnimal = (TypesOfAnimals)type;
-
-            switch (typeOfAnimal)
+            switch (type)
             {
                 case TypesOfAnimals.Elephant:
                     return "Слон трубит";
@@ -194,7 +154,44 @@ namespace _50_Zoo
             }
 
             return null;
-        }        
+        }     
+        
+        private TypesOfAnimals GetAnimalType()
+        {
+            return ((TypesOfAnimals)_random.Next(Enum.GetValues(typeof(TypesOfAnimals)).Length));
+        }
+    }
+
+    class Animal
+    {
+        private static Random _random = new Random();
+        public TypesOfAnimals Type { get; private set; }
+        public string Gender { get; private set; }
+
+
+
+        public Animal(TypesOfAnimals type)
+        {
+            Type = type;
+            Gender = GetGender();
+        }
+
+        private string GetGender()
+        {
+            int maleGender = 0;
+            int femaleGender = 2;
+            int gender = _random.Next(maleGender, femaleGender);
+
+            if (gender == maleGender)
+            {
+                return "Male";
+            }
+            else
+            {
+                return "Female";
+            }
+        }
+
     }    
 }
 
