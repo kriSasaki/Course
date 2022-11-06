@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -20,7 +20,7 @@ namespace _54__AnarchyInHospital
                 const string SortByAge = "2";
                 const string SortByDesease = "3";
 
-                hospital.ShowSick();
+                hospital.ShowPatients();
 
                 Console.WriteLine($"\n{SortByName} - отсортировать по имени" +
                     $"\n{SortByAge} - отсортировать по возрасту" +
@@ -67,7 +67,7 @@ namespace _54__AnarchyInHospital
             _patients.Add(new Ill("Петр", 56, "СПИД"));
         }
 
-        public void ShowSick()
+        public void ShowPatients()
         {
             foreach (var ill in _patients)
             {
@@ -80,12 +80,8 @@ namespace _54__AnarchyInHospital
             Console.WriteLine("Введите имя: ");
             string name = Console.ReadLine();
 
-            var sortedPatients = _patients.Where(patient => patient.Name == name);
-
-            foreach (var patient in sortedPatients)
-            {
-                Console.WriteLine($"{patient.Name}, возраст - {patient.Age}, ,болезнь - {patient.Disease}");
-            }
+            var sortedPatients = _patients.Where(patient => patient.Name == name).ToList();
+            ShowSortedList(sortedPatients);
         }
 
         public void SortByAge()
@@ -93,12 +89,8 @@ namespace _54__AnarchyInHospital
             Console.WriteLine("Введите возраст: ");
             int age = Convert.ToInt32(Console.ReadLine());
 
-            var sortedPatients = _patients.Where(patient => patient.Age == age);
-
-            foreach (var patient in sortedPatients)
-            {
-                Console.WriteLine($"{patient.Name}, возраст - {patient.Age}, ,болезнь - {patient.Disease}");
-            }
+            var sortedPatients = _patients.Where(patient => patient.Age == age).ToList();
+            ShowSortedList(sortedPatients);
         }
 
         public void SortByDisease()
@@ -106,9 +98,13 @@ namespace _54__AnarchyInHospital
             Console.WriteLine("Введите болезнь: ");
             string disease = Console.ReadLine();
 
-            var sortedPatients = _patients.Where(patient => patient.Disease == disease);
+            var sortedPatients = _patients.Where(patient => patient.Disease == disease).ToList();
+            ShowSortedList(sortedPatients);
+        }
 
-            foreach (var patient in sortedPatients)
+        public void ShowSortedList(List<Ill> patients)
+        {
+            foreach (var patient in patients)
             {
                 Console.WriteLine($"{patient.Name}, возраст - {patient.Age}, ,болезнь - {patient.Disease}");
             }
