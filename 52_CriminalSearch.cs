@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +11,7 @@ namespace _52_CriminalSearch
         static void Main(string[] args)
         {
             List<Criminal> criminals = new List<Criminal> { new Criminal("Резня", true, 150, 70, "Мексиканец"), new Criminal("Афро", false, 190, 80, "Американец"), new Criminal("Фелисье́н", false, 160, 110, "Руандиец"), new Criminal("Семен", false, 170, 90, "Русский"), new Criminal("Хоакин", false, 190, 90, "Мексиканец"), new Criminal("А", true, 190, 90, "Русский"), new Criminal("Б", false, 160, 50, "Русский") };
+            var program = new Program();
             bool isWorking= true;
 
             while (isWorking)
@@ -29,17 +30,27 @@ namespace _52_CriminalSearch
                 Console.Write("Введите национальность преступника: ");
                 string nationality = Console.ReadLine();
 
-                var filteredCriminals = criminals.Where(criminal => criminal.IsPrisoner == false && criminal.Height == height && criminal.Weight == weight && criminal.Nationality == nationality);
+                var filteredCriminals = program.SortingCriminals(criminals, height, weight, nationality);
+
                 Console.WriteLine("\nСписки не пойманных преступников\n");
 
-                foreach(var criminal in filteredCriminals)
-                {
-                    Console.WriteLine($"{criminal.Name}, рост - {criminal.Height}, вес - {criminal.Weight}, {criminal.Nationality}");
-                }
+                program.ShowCriminals(filteredCriminals);
 
                 Console.ReadKey();
                 Console.Clear();
             }
+        }
+        private List<Criminal> SortingCriminals(List<Criminal> criminals, int height, int weight, string nationality)
+        {
+              return    criminals.Where(criminal => criminal.IsPrisoner == false && criminal.Height == height && criminal.Weight == weight && criminal.Nationality == nationality).ToList();
+        }
+
+        private void ShowCriminals(List<Criminal> criminals)
+        {
+                foreach(var criminal in criminals)
+                {
+                    Console.WriteLine($"{criminal.Name}, рост - {criminal.Height}, вес - {criminal.Weight}, {criminal.Nationality}");
+                }
         }
     }
 
