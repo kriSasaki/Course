@@ -30,7 +30,7 @@ namespace _52_CriminalSearch
                 Console.Write("Введите национальность преступника: ");
                 string nationality = Console.ReadLine();
 
-                var filteredCriminals = program.SortingCriminals(criminals, height, weight, nationality);
+                var filteredCriminals = program.SortCriminals(criminals, height, weight, nationality);
 
                 Console.WriteLine("\nСписки не пойманных преступников\n");
 
@@ -40,7 +40,7 @@ namespace _52_CriminalSearch
                 Console.Clear();
             }
         }
-        private List<Criminal> SortingCriminals(List<Criminal> criminals, int height, int weight, string nationality)
+        private List<Criminal> SortCriminals(List<Criminal> criminals, int height, int weight, string nationality)
         {
               return    criminals.Where(criminal => criminal.IsPrisoner == false && criminal.Height == height && criminal.Weight == weight && criminal.Nationality == nationality).ToList();
         }
