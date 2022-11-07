@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,17 +11,16 @@ namespace _53_Amnesty
         static void Main(string[] args)
         {
             List<Citizen> prisoners = new List<Citizen> { new Citizen("Джорджи Костава", "Антиправительственное"), new Citizen("Димитрий", "1"), new Citizen("Кевин Каулинский", "Антиправительственное"), new Citizen("Кордон Калло", "Антиправительственное"), new Citizen("М. Вонел", "2") };
-            var program = new Program();
 
-            program.ShowPrisoners(prisoners);
+            ShowPrisoners(prisoners);
 
-            var prisonersAfterAmnesty = program.SortPrisoners(prisoners);
+            prisoners = SortPrisoners(prisoners);
 
             Console.WriteLine("\nЗаключенные после амнистии\n");
-            program.ShowPrisoners(prisonersAfterAmnesty);
+            ShowPrisoners(prisoners);
         }
 
-        private void ShowPrisoners(List<Citizen> citizens)
+        private static void ShowPrisoners(List<Citizen> citizens)
         {
             foreach (var citizen in citizens)
             {
@@ -29,7 +28,7 @@ namespace _53_Amnesty
             }
         }
 
-        private List<Citizen> SortPrisoners(List<Citizen> prisoners)
+        private static List<Citizen> SortPrisoners(List<Citizen> prisoners)
         {
             return prisoners.Where(prisoner => prisoner.Crime != "Антиправительственное").ToList();
         }
