@@ -30,7 +30,8 @@ namespace _53_Amnesty
 
         private static List<Citizen> HoldAmnesty(List<Citizen> prisoners)
         {
-            return prisoners.Where(prisoner => prisoner.Crime != "Антиправительственное").ToList();
+            string judgement = "Антиправительственное";
+            return prisoners.Where(prisoner => prisoner.Crime != judgement).ToList();
         }
     }
 
