@@ -11,10 +11,9 @@ namespace _55_TopPlayers
         static void Main(string[] args)
         {
             Server server = new Server();
-            server.ShowPlayers(server.GetPlayers());
-            Console.WriteLine("\nТоп 3 игрока по уровню:");
+            Console.WriteLine($"\nТоп {server._maxTopPlayers} игрока по уровню:");
             server.SortTopLevelPlayers();
-            Console.WriteLine("\nТоп 3 игрока по силе:");
+            Console.WriteLine($"\nТоп {server._maxTopPlayers} игрока по силе:");
             server.SortTopPowerPlayers();
         }
     }
@@ -22,10 +21,11 @@ namespace _55_TopPlayers
     class Server
     {
         List<Player> _players = new List<Player>();
-        private int _maxTopPlayers = 3;
+        public int _maxTopPlayers { get; private set; } 
         
         public Server()
         {
+            _maxTopPlayers = 3;
             _players.Add(new Player("Джони", 20, 1300));
             _players.Add(new Player("Боб", 99, 0));
             _players.Add(new Player(" ", 999, 99999999));
