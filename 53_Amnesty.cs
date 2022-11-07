@@ -1,48 +1,127 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace _53_Amnesty
+namespace _54__AnarchyInHospital
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            List<Citizen> prisoners = new List<Citizen> { new Citizen("Джорджи Костава", "Антиправительственное"), new Citizen("Димитрий", "1"), new Citizen("Кевин Каулинский", "Антиправительственное"), new Citizen("Кордон Калло", "Антиправительственное"), new Citizen("М. Вонел", "2") };
+            Hospital hospital = new Hospital();
+            bool isWork = true;
 
-            ShowPrisoners(prisoners);
-
-            prisoners = SortPrisoners(prisoners);
-
-            Console.WriteLine("\nЗаключенные после амнистии\n");
-            ShowPrisoners(prisoners);
-        }
-
-        private static void ShowPrisoners(List<Citizen> citizens)
-        {
-            foreach (var citizen in citizens)
+            while (isWork)
             {
-                Console.WriteLine($"{citizen.Name}, преступление - {citizen.Crime}");
-            }
-        }
+                const string SortByName = "1";
+                const string SortByAge = "2";
+                const string SortByDesease = "3";
 
-        private static List<Citizen> SortPrisoners(List<Citizen> prisoners)
-        {
-            return prisoners.Where(prisoner => prisoner.Crime != "Антиправительственное").ToList();
+                hospital.ShowPatients();
+
+                Console.WriteLine($"\n{SortByName} - отсортировать по имени" +
+                    $"\n{SortByAge} - отсортировать по возрасту" +
+                    $"\n{SortByDesease} - отсортировать по заболеванию\n");
+                string command = Console.ReadLine();
+
+                switch (command)
+                {
+                    case SortByName:
+                        hospital.FilterByName();
+                        break;
+                    case SortByAge:
+                        hospital.FilterByAge();
+                        break;
+                    case SortByDesease:
+                        hospital.FilterByDisease();
+                        break;
+                    default:
+                        Console.WriteLine("Такой команды нет");
+                        break;
+                }
+
+                Console.ReadKey();
+                Console.Clear();
+            }
         }
     }
 
-    class Citizen
+    class Hospital
+    {
+        private List<Patient> _patients = new List<Patient>();
+
+        public Hospital()
+        {
+            _patients.Add(new Patient("Иван", 19, "ишемия"));
+            _patients.Add(new Patient("Петр", 37, "СПИД"));
+            _patients.Add(new Patient("Кирилл", 12, "диарея"));
+            _patients.Add(new Patient("Константин", 20, "диарея"));
+            _patients.Add(new Patient("Иван", 12, "туберкулез"));
+            _patients.Add(new Patient("Константин", 56, "диарея"));
+            _patients.Add(new Patient("Иван", 19, "туберкулез"));
+            _patients.Add(new Patient("Кирилл", 37, "СПИД"));
+            _patients.Add(new Patient("Константин", 20, "ишемия"));
+            _patients.Add(new Patient("Петр", 56, "СПИД"));
+        }
+
+        public void ShowPatients()
+        {
+            foreach (var ill in _patients)
+            {
+                Console.WriteLine($"{ill.Name}, {ill.Age} лет, болезнь - {ill.Disease}");
+            }
+        }
+
+        public void FilterByName()
+        {
+            Console.WriteLine("Введите имя: ");
+            string name = Console.ReadLine();
+
+            var sortedPatients = _patients.Where(patient => patient.Name == name).ToList();
+            ShowSortedList(sortedPatients);
+        }
+
+        public void FilterByAge()
+        {
+            Console.WriteLine("Введите возраст: ");
+            int age = Convert.ToInt32(Console.ReadLine());
+
+            var sortedPatients = _patients.Where(patient => patient.Age == age).ToList();
+            ShowSortedList(sortedPatients);
+        }
+
+        public void FilterByDisease()
+        {
+            Console.WriteLine("Введите болезнь: ");
+            string disease = Console.ReadLine();
+
+            var sortedPatients = _patients.Where(patient => patient.Disease == disease).ToList();
+            ShowSortedList(sortedPatients);
+        }
+
+        public void ShowSortedList(List<Patient> patients)
+        {
+            foreach (var patient in patients)
+            {
+                Console.WriteLine($"{patient.Name}, возраст - {patient.Age}, ,болезнь - {patient.Disease}");
+            }
+        }
+    }
+
+    class Patient
     {
         public string Name { get; private set; }
-        public string Crime { get; private set; }
+        public int Age { get; private set; }
+        public string Disease { get; private set; }
 
-        public Citizen(string name, string crime)
+        public Patient(string name, int age, string disease)
         {
             Name = name;
-            Crime = crime;
+            Age = age;
+            Disease = disease;
         }
     }
 }
