@@ -16,27 +16,27 @@ namespace _54__AnarchyInHospital
 
             while (isWork)
             {
-                const string SortByName = "1";
-                const string SortByAge = "2";
-                const string SortByDesease = "3";
+                const string FilterByName = "1";
+                const string FilterByAge = "2";
+                const string FilterByDesease = "3";
 
                 hospital.ShowPatients();
 
-                Console.WriteLine($"\n{SortByName} - отсортировать по имени" +
-                    $"\n{SortByAge} - отсортировать по возрасту" +
-                    $"\n{SortByDesease} - отсортировать по заболеванию\n");
+                Console.WriteLine($"\n{FilterByName} - отсортировать по имени" +
+                    $"\n{FilterByAge} - отсортировать по возрасту" +
+                    $"\n{FilterByDesease} - отсортировать по заболеванию\n");
                 string command = Console.ReadLine();
 
                 switch (command)
                 {
-                    case SortByName:
-                        hospital.SortByName();
+                    case FilterByName:
+                        hospital.FilterByName();
                         break;
-                    case SortByAge:
-                        hospital.SortByAge();
+                    case FilterByAge:
+                        hospital.FilterByAge();
                         break;
-                    case SortByDesease:
-                        hospital.SortByDisease();
+                    case FilterByDesease:
+                        hospital.FilterByDisease();
                         break;
                     default:
                         Console.WriteLine("Такой команды нет");
@@ -51,20 +51,20 @@ namespace _54__AnarchyInHospital
 
     class Hospital
     {
-        private List<Ill> _patients = new List<Ill>();
+        private List<Patient> _patients = new List<Patient>();
 
         public Hospital()
         {
-            _patients.Add(new Ill("Иван", 19, "ишемия"));
-            _patients.Add(new Ill("Петр", 37, "СПИД"));
-            _patients.Add(new Ill("Кирилл", 12, "диарея"));
-            _patients.Add(new Ill("Константин", 20, "диарея"));
-            _patients.Add(new Ill("Иван", 12, "туберкулез"));
-            _patients.Add(new Ill("Константин", 56, "диарея"));
-            _patients.Add(new Ill("Иван", 19, "туберкулез"));
-            _patients.Add(new Ill("Кирилл", 37, "СПИД"));
-            _patients.Add(new Ill("Константин", 20, "ишемия"));
-            _patients.Add(new Ill("Петр", 56, "СПИД"));
+            _patients.Add(new Patient("Иван", 19, "ишемия"));
+            _patients.Add(new Patient("Петр", 37, "СПИД"));
+            _patients.Add(new Patient("Кирилл", 12, "диарея"));
+            _patients.Add(new Patient("Константин", 20, "диарея"));
+            _patients.Add(new Patient("Иван", 12, "туберкулез"));
+            _patients.Add(new Patient("Константин", 56, "диарея"));
+            _patients.Add(new Patient("Иван", 19, "туберкулез"));
+            _patients.Add(new Patient("Кирилл", 37, "СПИД"));
+            _patients.Add(new Patient("Константин", 20, "ишемия"));
+            _patients.Add(new Patient("Петр", 56, "СПИД"));
         }
 
         public void ShowPatients()
@@ -75,7 +75,7 @@ namespace _54__AnarchyInHospital
             }
         }
 
-        public void SortByName()
+        public void FilterByName()
         {
             Console.WriteLine("Введите имя: ");
             string name = Console.ReadLine();
@@ -84,7 +84,7 @@ namespace _54__AnarchyInHospital
             ShowSortedList(sortedPatients);
         }
 
-        public void SortByAge()
+        public void FilterByAge()
         {
             Console.WriteLine("Введите возраст: ");
             int age = Convert.ToInt32(Console.ReadLine());
@@ -93,7 +93,7 @@ namespace _54__AnarchyInHospital
             ShowSortedList(sortedPatients);
         }
 
-        public void SortByDisease()
+        public void FilterByDisease()
         {
             Console.WriteLine("Введите болезнь: ");
             string disease = Console.ReadLine();
@@ -102,7 +102,7 @@ namespace _54__AnarchyInHospital
             ShowSortedList(sortedPatients);
         }
 
-        public void ShowSortedList(List<Ill> patients)
+        public void ShowSortedList(List<Patient> patients)
         {
             foreach (var patient in patients)
             {
@@ -111,13 +111,13 @@ namespace _54__AnarchyInHospital
         }
     }
 
-    class Ill
+    class Patient
     {
         public string Name { get; private set; }
         public int Age { get; private set; }
         public string Disease { get; private set; }
 
-        public Ill(string name, int age, string disease)
+        public Patient(string name, int age, string disease)
         {
             Name = name;
             Age = age;
