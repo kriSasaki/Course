@@ -20,7 +20,7 @@ namespace _55_TopPlayers
 
     class Server
     {
-        List<Player> _players = new List<Player>();
+        private List<Player> _players = new List<Player>();
         public int _maxTopPlayers { get; private set; } 
         
         public Server()
@@ -58,11 +58,6 @@ namespace _55_TopPlayers
         {
             var filteredPlayers = _players.OrderByDescending(player => player.Power).Take(_maxTopPlayers).ToList();
             ShowPlayers(filteredPlayers);
-        }
-
-        public List<Player> GetPlayers()
-        {
-            return _players;
         }
     }
 
