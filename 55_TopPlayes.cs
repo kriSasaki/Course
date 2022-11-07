@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +11,7 @@ namespace _55_TopPlayers
         static void Main(string[] args)
         {
             Server server = new Server();
-            server.ShowPlayers();
+            server.ShowPlayers(server.GetPlayers());
             Console.WriteLine("\nТоп 3 игрока по уровню:");
             server.SortTopLevelPlayers();
             Console.WriteLine("\nТоп 3 игрока по силе:");
@@ -40,9 +40,9 @@ namespace _55_TopPlayers
             _players.Add(new Player("щищ", 11, 11111));
         }
 
-        public void ShowPlayers()
+        public void ShowPlayers(List<Player> players)
         {
-            foreach(var player in _players)
+            foreach(var player in players)
             {
                 Console.WriteLine($"{player.Name}, уровень - {player.Level}, сила - {player.Power}");
             }
@@ -50,22 +50,19 @@ namespace _55_TopPlayers
 
         public void SortTopLevelPlayers()
         {
-            var filteredPlayers = _players.OrderByDescending(player => player.Level).Take(_maxTopPlayers).ToList(); 
-            ShowSortedPlayer(filteredPlayers);
+            var filteredPlayers = _players.OrderByDescending(player => player.Level).Take(_maxTopPlayers).ToList();
+            ShowPlayers(filteredPlayers);
         }
 
         public void SortTopPowerPlayers()
         {
             var filteredPlayers = _players.OrderByDescending(player => player.Power).Take(_maxTopPlayers).ToList();
-            ShowSortedPlayer(filteredPlayers);
+            ShowPlayers(filteredPlayers);
         }
 
-        public void ShowSortedPlayer(List<Player> players)
+        public List<Player> GetPlayers()
         {
-            foreach (var player in players)
-            {
-                Console.WriteLine($"{player.Name}, уровень - {player.Level}, сила - {player.Power}");
-            }
+            return _players;
         }
     }
 
