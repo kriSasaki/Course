@@ -10,22 +10,21 @@ namespace _55_TopPlayers
     {
         static void Main(string[] args)
         {
+            int maxTopPlayers = 3;
             Server server = new Server();
-            Console.WriteLine($"\nТоп {server._maxTopPlayers} игрока по уровню:");
-            server.SortTopLevelPlayers();
-            Console.WriteLine($"\nТоп {server._maxTopPlayers} игрока по силе:");
-            server.SortTopPowerPlayers();
+            Console.WriteLine($"\nТоп {maxTopPlayers} игрока по уровню:");
+            server.ShowTopLevelPlayers(maxTopPlayers);
+            Console.WriteLine($"\nТоп {maxTopPlayers} игрока по силе:");
+            server.ShowTopPowerPlayers(maxTopPlayers);
         }
     }
 
     class Server
     {
         private List<Player> _players = new List<Player>();
-        public int _maxTopPlayers { get; private set; } 
         
         public Server()
         {
-            _maxTopPlayers = 3;
             _players.Add(new Player("Джони", 20, 1300));
             _players.Add(new Player("Боб", 99, 0));
             _players.Add(new Player(" ", 999, 99999999));
@@ -48,15 +47,15 @@ namespace _55_TopPlayers
             }
         }
 
-        public void SortTopLevelPlayers()
+        public void ShowTopLevelPlayers(int maxTopPlayers)
         {
-            var filteredPlayers = _players.OrderByDescending(player => player.Level).Take(_maxTopPlayers).ToList();
+            var filteredPlayers = _players.OrderByDescending(player => player.Level).Take(maxTopPlayers).ToList();
             ShowPlayers(filteredPlayers);
         }
 
-        public void SortTopPowerPlayers()
+        public void ShowTopPowerPlayers(int maxTopPlayers)
         {
-            var filteredPlayers = _players.OrderByDescending(player => player.Power).Take(_maxTopPlayers).ToList();
+            var filteredPlayers = _players.OrderByDescending(player => player.Power).Take(maxTopPlayers).ToList();
             ShowPlayers(filteredPlayers);
         }
     }
