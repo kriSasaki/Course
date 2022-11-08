@@ -16,23 +16,23 @@ namespace _54__AnarchyInHospital
 
             while (isWork)
             {
-                const string FilterByName = "1";
-                const string FilterByAge = "2";
+                const string SortByName = "1";
+                const string SortByAge = "2";
                 const string FilterByDesease = "3";
 
                 hospital.ShowPatients();
 
-                Console.WriteLine($"\n{FilterByName} - отсортировать по имени" +
-                    $"\n{FilterByAge} - отсортировать по возрасту" +
+                Console.WriteLine($"\n{SortByName} - отсортировать по имени" +
+                    $"\n{SortByAge} - отсортировать по возрасту" +
                     $"\n{FilterByDesease} - отсортировать по заболеванию\n");
                 string command = Console.ReadLine();
 
                 switch (command)
                 {
-                    case FilterByName:
+                    case SortByName:
                         hospital.SortByName();
                         break;
-                    case FilterByAge:
+                    case SortByAge:
                         hospital.SortByAge();
                         break;
                     case FilterByDesease:
