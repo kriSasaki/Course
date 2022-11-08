@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,80 +12,69 @@ namespace _58_UnificationOfTroops
         {
             CommandCenter commandCenter = new CommandCenter();
             commandCenter.ShowTroops();
+            commandCenter.TransferOfSoldiers();
             Console.WriteLine("\nОтряды после перераспределения\n");
-            commandCenter.RedistributionOfSoldiers();
+            commandCenter.ShowTroops();
         }
     }
 
     class CommandCenter
     {
-        private Troop _firstTroop = new Troop();
-        private Troop _secondTroop = new Troop();
+        private List<Soldier> _firstTroop = new List<Soldier>();
+        private List<Soldier> _secondTroop = new List<Soldier>();
+        private string[] _names = { "Красноруцкий", "Бабурин ", "Вахтин", "Баранов", "Трунов" };
+        private static Random _random = new Random();
 
-        public void RedistributionOfSoldiers()
+        public CommandCenter()
         {
-            var filteredTroop = _firstTroop.FilterSoldiers().ToList();
+            CreateTroop(_firstTroop, 10);
+            CreateTroop(_secondTroop, 10);
+        }
 
-            Console.WriteLine("Солдаты отправленные на перераспределение");
+        public void TransferOfSoldiers()
+        {
+            string filteringLetter = "Б";
+            var filteredTroop = FilterSoldiers(filteringLetter).ToList();
+
+            Console.WriteLine("\nСолдаты отправленные на перераспределение\n");
             
             foreach (var troop in filteredTroop)
             {
                 Console.WriteLine(troop.Name);
             }
-
-            _secondTroop.UnionTroops(filteredTroop);
+            
+            _secondTroop = _secondTroop.Union(filteredTroop).ToList();
         }
 
         public void ShowTroops()
         {
-            _firstTroop.ShowSoldiers();
+            ShowSoldiers(_firstTroop);
             Console.WriteLine();
-            _secondTroop.ShowSoldiers();
-        }
-    }
-
-    class Troop
-    {
-        private List<Soldier> _soldiers = new List<Soldier>();
-        private string[] _names = { "Красноруцкий", "Бабурин ", "Вахтин", "Баранов", "Трунов" };
-        private static Random _random = new Random();
-
-        public Troop()
-        {
-            CreateTroop(10);
+            ShowSoldiers(_secondTroop);
         }
 
-        public List<Soldier> FilterSoldiers()
+        public List<Soldier> FilterSoldiers(string filteringLetter)
         {
-            var filteredSoldiers = _soldiers.Where(soldier => soldier.Name.ToUpper().StartsWith("Б")).ToList();
-            _soldiers = _soldiers.OrderBy(soldier => soldier.Name).ToList();
-            _soldiers = _soldiers.SkipWhile(soldier => soldier.Name.ToUpper().StartsWith("Б")).ToList();
-            ShowSoldiers();
+            var filteredSoldiers = _firstTroop.Where(soldier => soldier.Name.ToUpper().StartsWith(filteringLetter)).ToList();
+            _firstTroop = _firstTroop.OrderBy(soldier => soldier.Name).SkipWhile(soldier => soldier.Name.ToUpper().StartsWith(filteringLetter)).ToList();
             Console.WriteLine();
             return filteredSoldiers;
         }
 
-        public void ShowSoldiers()
+        public void ShowSoldiers(List<Soldier> soldiers)
         {
-            foreach (var soldier in _soldiers)
+            foreach (var soldier in soldiers)
             {
                 Console.WriteLine($"{soldier.Name}");
             }
         }
 
-        public void UnionTroops(List<Soldier> soldiers)
-        {
-            _soldiers = _soldiers.Union(soldiers).ToList();
-            Console.WriteLine();
-            ShowSoldiers();
-        }
-
-        private void CreateTroop(int amount)
+        private void CreateTroop(List<Soldier> soldiers, int amount)
         {
             for (int i = 0; i < amount; i++)
             {
                 int nameID = GetNameID();
-                _soldiers.Add(new Soldier(_names[nameID]));
+                soldiers.Add(new Soldier(_names[nameID]));
             }
         }
 
