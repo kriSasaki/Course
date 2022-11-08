@@ -30,10 +30,10 @@ namespace _54__AnarchyInHospital
                 switch (command)
                 {
                     case FilterByName:
-                        hospital.FilterByName();
+                        hospital.SortByName();
                         break;
                     case FilterByAge:
-                        hospital.FilterByAge();
+                        hospital.SortByAge();
                         break;
                     case FilterByDesease:
                         hospital.FilterByDisease();
@@ -75,22 +75,14 @@ namespace _54__AnarchyInHospital
             }
         }
 
-        public void FilterByName()
+        public void SortByName()
         {
-            Console.WriteLine("Введите имя: ");
-            string name = Console.ReadLine();
-
-            var sortedPatients = _patients.Where(patient => patient.Name == name).ToList();
-            ShowSortedList(sortedPatients);
+            _patients = _patients.OrderBy(patient => patient.Name).ToList();
         }
 
-        public void FilterByAge()
+        public void SortByAge()
         {
-            Console.WriteLine("Введите возраст: ");
-            int age = Convert.ToInt32(Console.ReadLine());
-
-            var sortedPatients = _patients.Where(patient => patient.Age == age).ToList();
-            ShowSortedList(sortedPatients);
+            _patients = _patients.OrderBy(patient => patient.Age).ToList();
         }
 
         public void FilterByDisease()
@@ -99,10 +91,10 @@ namespace _54__AnarchyInHospital
             string disease = Console.ReadLine();
 
             var sortedPatients = _patients.Where(patient => patient.Disease == disease).ToList();
-            ShowSortedList(sortedPatients);
+            ShowFilteredList(sortedPatients);
         }
 
-        public void ShowSortedList(List<Patient> patients)
+        public void ShowFilteredList(List<Patient> patients)
         {
             foreach (var patient in patients)
             {
