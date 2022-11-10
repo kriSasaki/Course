@@ -34,7 +34,7 @@ namespace _58_UnificationOfTroops
         public void TransferOfSoldiers()
         {
             string filteringLetter = "Б";
-            var filteredTroop = FilterSoldiers(filteringLetter).ToList();
+            var filteredTroop = ElectSoldiers(ref _firstTroop, filteringLetter).ToList();
 
             Console.WriteLine("\nСолдаты отправленные на перераспределение\n");
             
@@ -53,10 +53,10 @@ namespace _58_UnificationOfTroops
             ShowSoldiers(_secondTroop);
         }
 
-        public List<Soldier> FilterSoldiers(string filteringLetter)
+        public List<Soldier> ElectSoldiers(ref List<Soldier> soldiers, string filteringLetter)
         {
-            var filteredSoldiers = _firstTroop.Where(soldier => soldier.Name.ToUpper().StartsWith(filteringLetter)).ToList();
-            _firstTroop = _firstTroop.OrderBy(soldier => soldier.Name).SkipWhile(soldier => soldier.Name.ToUpper().StartsWith(filteringLetter)).ToList();
+            var filteredSoldiers = soldiers.Where(soldier => soldier.Name.ToUpper().StartsWith(filteringLetter)).ToList();
+            soldiers = soldiers.Except(filteredSoldiers).ToList();
             Console.WriteLine();
             return filteredSoldiers;
         }
