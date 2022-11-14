@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,7 +19,7 @@ namespace _51_CarService
                 const string CommandOpenService = "1";
                 const string CommandExit = "2";
                 carSevice.ShowParts();
-                Console.WriteLine($"{CommandOpenService} - открыть автосервис" +
+                Console.WriteLine($"\n{CommandOpenService} - открыть автосервис" +
                     $"\n{CommandExit} - выйти");
                 string command = Console.ReadLine();
                 Console.Clear();
@@ -42,7 +43,7 @@ namespace _51_CarService
     class CarSevice
     {
         private Car _car;
-        private List<Storage> _parts = new List<Storage>();
+        private List<Storage> _storages = new List<Storage>();
         private Random _random = new Random();
         public double Money { get; private set; }
 
@@ -59,10 +60,11 @@ namespace _51_CarService
             int index = 0;
             Console.WriteLine($"Мастерская. Доступно {Money}. Детали в наличии:");
 
-            foreach (var part in _parts)
+            foreach (var storage in _storages)
             {
                 index++;
-                Console.WriteLine($"{index}. {part.Part.Name}, {part.Amount} - количество");
+                Console.Write($"{index}. ");
+                storage.ShowInfo();
             }
         }
 
@@ -81,28 +83,22 @@ namespace _51_CarService
                     ShowParts();
                     Console.WriteLine("\nПриехала новая машина");
                     _car.ShowParts();
-                    Console.WriteLine($"\n Выберите деталь для замены или 'stop' для завершения ремонта: ");
+                    Console.WriteLine($"\n Выберите деталь для замены или '{CommandStop}' для завершения ремонта: ");
                     string command = Console.ReadLine();
 
                     if (command == CommandStop)
                     {
                         replacing = false;
                     }
-                    else if (int.TryParse(command, out int partNumber) && partNumber <= _car.partsAmount && partNumber > 0)
-                    {
-                        int partIndex = partNumber - 1;
-                        int partPrice = GetPartPrice(_car, partIndex);
-                        double jobMultuplier = 0.5;
-                        double workPayment = partPrice * jobMultuplier;
-                        double fullPayment = workPayment + partPrice;
-
-                        if (GetPartCondition(_car, partIndex))
+                    else if (int.TryParse(command, out int partNumber) && ReplacePart(partNumber, out double fullPayment, out bool isPartUnbroken))
+                    {                        
+                        if (isPartUnbroken)
                         {
-                            PayList(-fullPayment);
+                            PayPenalty(fullPayment);
                         }
                         else
                         {
-                            ReplacePart(partIndex, fullPayment);
+                            PayList(fullPayment);
                         }
                     }
                     else
@@ -121,58 +117,58 @@ namespace _51_CarService
                 }
                 else
                 {
-                    int penalty = GetPenalty();
-                    Console.WriteLine($"Машина осталась неисправна");
-                    PayList(-penalty);
+                    int penalty = _car.GetBrokenPartsPrice();
+                    PayPenalty(penalty);
                     isOpen = false;
                 }
+
+                Console.ReadKey();
+                Console.Clear();
             }
         }
 
-        private int GetPenalty()
+        private bool ReplacePart(int partNumber, out double fullPayment, out bool isPartUnbroken)
         {
-            return _car.GetBrokenPartsPrice();
-        }
+            int partIndex = partNumber - 1;
+            fullPayment = 0;
+            isPartUnbroken = false;
 
-        private void ReplacePart(int partNumber, double payment)
-        {
-            if (_parts[partNumber].Amount > 0)
+            if (_storages[partIndex].Amount > 0)
             {
-                _parts[partNumber].ReduceAmount();
-                _car.ReplacePart(partNumber);
-                PayList(payment);
+                int partPrice = _car.GetPartPrice(partIndex);
+                double jobMultuplier = 0.5;
+                double workPayment = partPrice * jobMultuplier;
+                fullPayment = workPayment + partPrice;
+                isPartUnbroken = _car.IsPartUnbroken(partIndex);
+
+                Part part = _storages[partIndex].GetPart();
+                _car.ReplacePart(partIndex, part);
+
+                return true;
             }
-            else
+            else if (_storages[partIndex].Amount == 0)
             {
                 Console.WriteLine("У вас закончились детали");
+
+                return false;
             }
 
-        }
-
-        private int GetPartPrice(Car car, int partNumber)
-        {
-            return car.GetPartPrice(partNumber);
+            return false;
         }
 
         private void PayList(double payment)
         {
-            if (payment < 0)
-            {
-                double penaltyMultiplier = 2;
-                double fullPenalty = payment * penaltyMultiplier;
-                Console.WriteLine($"За неправильный ремонт вы платите штраф в размере двойной цены за деталь(-и)({fullPenalty})");
-                Money += fullPenalty;
-            }
-            else
-            {
-                Console.WriteLine($"За ремонт детали вы получили {payment} деняк");
-                Money += payment;
-            }
+            Console.WriteLine($"За ремонт детали вы получили {payment} деняк");
+            Money += payment;
         }
 
-        private bool GetPartCondition(Car car, int partNumber)
+        private void PayPenalty(double penalty)
         {
-            return car.GetPartCondition(partNumber);
+            double penaltyMultiplier = 2;
+            double fullPenalty = penalty * penaltyMultiplier;
+            Console.WriteLine($"Машина осталась неисправна");
+            Console.WriteLine($"За неправильный ремонт вы платите штраф в размере двойной цены за деталь(и) - ({fullPenalty})");
+            Money -= fullPenalty;
         }
 
         private void AddParts()
@@ -183,7 +179,7 @@ namespace _51_CarService
             for (int i = 0; i < partsAmount; i++)
             {
                 int partsCount = _random.Next(maxPartsCount);
-                _parts.Add(new Storage((PartsNames)i, true, partsCount));
+                _storages.Add(new Storage((PartsNames)i, true, partsCount));
             }
         }
     }
@@ -192,7 +188,7 @@ namespace _51_CarService
     {
         private static Random _random = new Random();
         private List<Part> _parts = new List<Part>();
-        public int partsAmount => _parts.Count;
+        public int PartsAmount => _parts.Count;
 
         public Car()
         {
@@ -215,9 +211,9 @@ namespace _51_CarService
             return _parts.Count(part => part.IsUnbroken == true) == _parts.Count();
         }
 
-        public void ReplacePart(int partNumber)
+        public void ReplacePart(int partNumber, Part part)
         {
-            _parts[partNumber].Replace();
+            _parts[partNumber] = part;
         }
 
         public int GetBrokenPartsPrice()
@@ -235,10 +231,11 @@ namespace _51_CarService
             return price;
         }
 
-        public bool GetPartCondition(int partNumber)
+        public bool IsPartUnbroken(int partNumber)
         {
             return _parts[partNumber].IsUnbroken == true;
         }
+
         public int GetPartPrice(int partNumber)
         {
             return _parts[partNumber].Price;
@@ -272,17 +269,24 @@ namespace _51_CarService
 
     class Storage
     {
-        public Part Part { get; private set; }
+        private Part Part;
         public int Amount { get; private set; }
+        
         public Storage(PartsNames name, bool isUnbroken, int amount)
         {
             Part = new Part(name, isUnbroken);
             Amount = amount;
         }
 
-        public void ReduceAmount()
+        public void ShowInfo()
         {
-            Amount -= 1;
+            Console.Write($"{Part.Name}, {Amount} - количество\n");
+        }
+
+        public Part GetPart()
+        {
+            Amount--;
+            return Part;
         }
     }
 
@@ -322,11 +326,11 @@ namespace _51_CarService
 
     enum PartsNames
     {
-        Двигатель,
-        Шасси,
-        Кузов,
-        Сцепление,
-        Подвеска,
-        Тормоза
+        Engine,
+        Chassis,
+        Body,
+        Clutch,
+        Pendant,
+        Brakes
     }
 }
