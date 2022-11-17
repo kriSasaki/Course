@@ -269,24 +269,29 @@ namespace _51_CarService
 
     class Storage
     {
-        private Part Part;
+        private Part _part;
         public int Amount { get; private set; }
         
         public Storage(PartsNames name, bool isUnbroken, int amount)
         {
-            Part = new Part(name, isUnbroken);
+            _part = new Part(name, isUnbroken);
             Amount = amount;
         }
 
         public void ShowInfo()
         {
-            Console.Write($"{Part.Name}, {Amount} - количество\n");
+            Console.Write($"{_part.Name}, {Amount} - количество\n");
         }
 
         public Part GetPart()
         {
+            ReduceNumberOfParts();
+            return _part;
+        }
+
+        private void ReduceNumberOfParts()
+        {
             Amount--;
-            return Part;
         }
     }
 
